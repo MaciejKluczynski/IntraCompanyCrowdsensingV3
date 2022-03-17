@@ -9,11 +9,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.DateManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.FileManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.SensingRequestsParser
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.SensingRequestsResultFilePathProvider
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 
 
 class ResultActivity : AppCompatActivity() {
@@ -21,7 +19,7 @@ class ResultActivity : AppCompatActivity() {
     private var fileManager = FileManager(this)
     private val currentDateProvider = DateManager()
     private val sensingRequestsParser = SensingRequestsParser( SensingRequestsResultFilePathProvider(this),fileManager,currentDateProvider)
-
+    private val firebaseManager = FirebaseManager("TEST")
 
     companion object{
         const val PERMISSION_WRITE_STORAGE = 101
@@ -133,6 +131,7 @@ class ResultActivity : AppCompatActivity() {
             )
         }else{
             val text = findViewById<EditText>(R.id.resultActivityAddCommentEditText).text.toString()
+            firebaseManager.insertSensingRequestResultIntoDatabase(ResultModel(content, result, ask_time, anwser_time, text))
             fileManager.saveResultToFile(content, result, ask_time, anwser_time, text)
         }
     }
