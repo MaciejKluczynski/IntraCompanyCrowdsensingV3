@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "352785323471",
+    "project_id": "intracompanycrowdsensingv3",
+    "storage_bucket": "intracompanycrowdsensingv3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352785323471:android:ab691ca9487da91e63eeba",
+        "android_client_info": {
+          "package_name": "com.kluczynski.maciej.intracompanycrowdsensingv3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352785323471-oemg5fm1n4d47fqbd2c82asn1madn8fk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCua4nKtbc-pKlghJnR1jh7E-9fkeLBzmM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352785323471-oemg5fm1n4d47fqbd2c82asn1madn8fk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
