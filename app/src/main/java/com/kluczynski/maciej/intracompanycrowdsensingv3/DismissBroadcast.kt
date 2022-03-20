@@ -4,13 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.DateManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.FileManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.SensingRequestsParser
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.SensingRequestsResultFilePathProvider
+import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 
 class DismissBroadcast: BroadcastReceiver() {
 
+    private val firebaseManager = FirebaseManager("TEST")
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("DISMISSED", "DISMISSED")
         context?.let{
@@ -22,7 +21,18 @@ class DismissBroadcast: BroadcastReceiver() {
                     dateManager
             )
             val sensingRequest = sensingRequestsParser.findAskedSensingRequest()
-            fileManager.saveResultToFile(sensingRequest.content,"DISMISSED",sensingRequest.time,dateManager.getCurrentDate(),"")
+            firebaseManager.insertSensingRequestResultIntoDatabase(ResultModel(
+                sensingRequest.content,
+                "DISMISSED",
+                sensingRequest.time,
+                dateManager.getCurrentDate(),
+                ""))
+            fileManager.saveResultToFile(
+                sensingRequest.content,
+                "DISMISSED",
+                sensingRequest.time,
+                dateManager.getCurrentDate(),
+                "")
         }
         //start dismiss activity
         /*val i = Intent()

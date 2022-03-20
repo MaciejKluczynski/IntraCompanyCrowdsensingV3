@@ -10,11 +10,11 @@ class FirebaseManager(name:String) {
 
     fun insertSensingRequestResultIntoDatabase(result: ResultModel){
         val sensingRequest = hashMapOf(
-            "content" to result.content.toString(),
-            "ask_time" to result.ask_time.toString(),
-            "result" to result.result.toString(),
-            "anwser_time" to result.anwser_time.toString(),
-            "comment" to result.comment.toString()
+            "content" to result.content,
+            "ask_time" to result.ask_time,
+            "result" to result.result,
+            "anwser_time" to result.anwser_time,
+            "comment" to result.comment
         )
         db.collection("TEST")
             .add(sensingRequest)
