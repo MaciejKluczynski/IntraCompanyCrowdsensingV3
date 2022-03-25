@@ -1,4 +1,4 @@
-package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
+package com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
@@ -9,10 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.ObjectToResultConverter
 import java.io.*
 
 //https://stackoverflow.com/questions/64189667/write-permissions-not-working-scoped-storage-android-sdk-30-aka-android-11
@@ -62,12 +63,13 @@ class FileManager(var context: Context) {
         val bytes = ByteArray(size)
         inputStream.read(bytes)
         inputStream.close()
+        Log.d("FILE CONTENT READ", bytes.toString())
         return String(bytes)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("Range", "Recycle")
-    private fun findFileAndGetUriAndQAndAbove(): Uri? {
+    fun findFileAndGetUriAndQAndAbove(): Uri? {
         val contentUri: Uri = MediaStore.Files.getContentUri("external")
         val selection: String = MediaStore.MediaColumns.RELATIVE_PATH + "=?"
         val selectionArgs = arrayOf(Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/")
@@ -81,11 +83,18 @@ class FileManager(var context: Context) {
                 if (fileName == "results.txt") {
                     val id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID))
                     uri = ContentUris.withAppendedId(contentUri, id)
+                    Log.d("FILE","ANDROID Q AND ABOVE URL FOUND SUCCESSFULLY $uri")
                     break
                 }
             }
         }
         return uri
+    }
+
+    fun getFileUriAndroidBelowQ():Uri?{
+        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
+        Log.d("FILE","ANDROID BELOW Q URL FOUND SUCCESSFULLY $dir/results.txt")
+        return Uri.parse("$dir/results.txt")
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -109,6 +118,7 @@ class FileManager(var context: Context) {
         val overwriteData = file_content + objectToResultConverter.convertObjectToJson(content)
         outputStream!!.write(overwriteData.toByteArray())
         outputStream.close()
+        Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY")
     }
 
     @SuppressLint("ShowToast")
@@ -129,9 +139,6 @@ class FileManager(var context: Context) {
                 createTextFileInSpecificLocationAndWriteDataToIt(result)
             }
         }
-        //kill the activity
-        if (context is AppCompatActivity)
-            (context as AppCompatActivity).finishAndRemoveTask()
     }
 
     private fun createTextFileInSpecificLocationAndWriteDataToIt(result: ResultModel){
@@ -145,17 +152,18 @@ class FileManager(var context: Context) {
         val fos = FileOutputStream(file)
         fos.write(objectToResultConverter.convertObjectToJson(result).toByteArray())
         fos.close()
+        Log.d("FILE","ANDROID BELOW Q FILE CREATED SUCCESFULLY IN $dir")
     }
     private fun overwriteFile(result: ResultModel){
         val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
         val fw: FileWriter = FileWriter("$dir/results.txt", true)
         fw.append(objectToResultConverter.convertObjectToJson(result))
         fw.close()
+        Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY IN $dir/results.txt")
     }
 
     private fun ifFileExists():Boolean{
         val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", "results.txt")
         return file.exists()
     }
-
 }

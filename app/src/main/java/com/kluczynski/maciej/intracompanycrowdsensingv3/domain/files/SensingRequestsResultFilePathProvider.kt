@@ -1,4 +1,4 @@
-package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
+package com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files
 
 import android.content.Context
 import android.preference.PreferenceManager

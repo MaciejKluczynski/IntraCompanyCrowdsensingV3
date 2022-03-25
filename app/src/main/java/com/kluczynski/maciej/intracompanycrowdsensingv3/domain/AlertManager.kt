@@ -11,7 +11,7 @@ import com.google.gson.Gson
 import com.kluczynski.maciej.intracompanycrowdsensingv3.ReminderBroadcast
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 
-class AlertManager(var context: AppCompatActivity, var dateManager: DateManager) {
+class AlertManager(var context: Context, var dateManager: DateManager) {
 
     //scheduling notifications at specific time
     private fun createAlert(alertTimeInterval: Long, requestCode: Int){
@@ -19,7 +19,7 @@ class AlertManager(var context: AppCompatActivity, var dateManager: DateManager)
         intent.putExtra("Question", "Have you got some time to answer a question")
         val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTimeInterval, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, alertTimeInterval, pendingIntent)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -35,8 +35,13 @@ class AlertManager(var context: AppCompatActivity, var dateManager: DateManager)
             createAlert(date.time, iterator)
         }
         Toast.makeText(context,"File loaded successfully!", Toast.LENGTH_SHORT).show()
+        killTheActivity()
+    }
+
+    private fun killTheActivity(){
         //kill activity after creating alerts
-        context.finishAndRemoveTask()
+        if (context is AppCompatActivity)
+            (context as AppCompatActivity).finishAndRemoveTask()
     }
 
 

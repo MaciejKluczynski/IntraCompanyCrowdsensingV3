@@ -1,4 +1,4 @@
-package com.kluczynski.maciej.intracompanycrowdsensingv3
+package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.kluczynski.maciej.intracompanycrowdsensingv3.WakeupReceiver
 import java.util.*
 
 class WakeupScheduler {
@@ -19,6 +20,6 @@ class WakeupScheduler {
         val intent = Intent(context, WakeupReceiver::class.java)
         Log.d("TIME",futureDate.timeInMillis.toString())
         val sender = PendingIntent.getBroadcast(context, 0, intent, 0)
-        am.set(AlarmManager.RTC_WAKEUP, futureDate.timeInMillis, sender)
+        am.setExact(AlarmManager.RTC_WAKEUP, futureDate.timeInMillis, sender)
     }
 }

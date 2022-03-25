@@ -1,9 +1,10 @@
-package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
+package com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files
 
 import android.annotation.SuppressLint
 import android.net.Uri
 import com.google.gson.Gson
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.DateManager
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -38,7 +39,7 @@ class SensingRequestsParser(private var sensingRequestsResultFilePathProvider: S
             else differences.add(dateManager.getCurrentTimeMs() - i)
         }
 
-        val min = differences.min()
+        val min = differences.minOrNull()
         val index = differences.indexOf(min)
         return sensingRequestList[index]
     }

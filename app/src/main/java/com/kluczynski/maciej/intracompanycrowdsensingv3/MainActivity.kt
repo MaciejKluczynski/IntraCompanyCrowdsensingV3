@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsResultFilePathProvider
 
 
 class MainActivity : AppCompatActivity() {
