@@ -1,11 +1,8 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3
 
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.MyNotificationManager
 
 class ReminderBroadcast: BroadcastReceiver() {
@@ -20,6 +17,4 @@ class ReminderBroadcast: BroadcastReceiver() {
             myNotificationManager.createCloseEndedNotification(it,intent)
         }
     }
-
-
 }

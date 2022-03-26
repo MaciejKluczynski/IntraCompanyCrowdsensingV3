@@ -18,7 +18,7 @@ import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequ
 class MainActivity : AppCompatActivity() {
 
     companion object{
-        const val PERMISSION_REQUEST_STORAGE = 1000
+        const val PERMISSION_READ_AND_WRITE_STORAGE = 101
         const val READ_REQUEST_CODE = 420
         const val CHANNEL_NAME = "ICC_CHANNEL"
         const val CHANNEL_DESCRIPTION = "App for ICC examination"
@@ -42,17 +42,20 @@ class MainActivity : AppCompatActivity() {
     private fun activateLoadBtn(){
         val loadBtn = findViewById<Button>(R.id.load_button)
         loadBtn.setOnClickListener {
-            //request permission
+            //request write storage permission
             //android M - Marshmello 6.0
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)!=
-                PackageManager.PERMISSION_GRANTED){
-                    //prosba o zezwolenie na dostep do pamieci wew
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
+                    (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
+                    PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)!=
+                    PackageManager.PERMISSION_GRANTED)){
                 requestPermissions(
-                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_STORAGE
+                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_READ_AND_WRITE_STORAGE
                 )
             }
+            //only when 2 permissions are provided - open file search
             else openFileSearch()
         }
     }
@@ -63,13 +66,13 @@ class MainActivity : AppCompatActivity() {
             grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == PERMISSION_REQUEST_STORAGE){
+        if(requestCode == PERMISSION_READ_AND_WRITE_STORAGE){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission to READ AND WRITE storage Granted", Toast.LENGTH_SHORT).show()
                 openFileSearch()
             }
             else{
-                Toast.makeText(this, "Permission NOT Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission to READ AND WRITE storage NOT Granted", Toast.LENGTH_SHORT).show()
                 finishAndRemoveTask()
             }
         }
@@ -96,5 +99,6 @@ class MainActivity : AppCompatActivity() {
                 alertManager.scheduleAlerts(fileContent)
             }
         }
+
     }
 }

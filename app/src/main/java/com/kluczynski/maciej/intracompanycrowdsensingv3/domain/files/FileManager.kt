@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.ObjectToResultConverter
 import java.io.*
@@ -27,7 +28,7 @@ class FileManager(var context: Context) {
     private fun createFileAndQAndAbove(content: ResultModel) {
         try {
             val values = ContentValues()
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "results")
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "results.txt")
             values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/")
             val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
@@ -91,10 +92,10 @@ class FileManager(var context: Context) {
         return uri
     }
 
-    fun getFileUriAndroidBelowQ():Uri?{
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
-        Log.d("FILE","ANDROID BELOW Q URL FOUND SUCCESSFULLY $dir/results.txt")
-        return Uri.parse("$dir/results.txt")
+    fun getFileUriAndroidBelowQ():Uri{
+        return File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOCUMENTS).toString() +
+                        "/Sensing requests data/", "results.txt").toUri()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)

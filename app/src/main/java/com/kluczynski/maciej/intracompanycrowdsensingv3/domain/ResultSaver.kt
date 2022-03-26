@@ -1,39 +1,33 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
 
+import android.Manifest
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.firebase.FirebaseDatabaseManager
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.firebase.FirebaseLoginManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.firebase.FirebaseStorageManager
 
 class ResultSaver(var context: Context) {
 
-    private val firebaseStorageManager = FirebaseStorageManager(context)
     private val firebaseLoginManager = FirebaseLoginManager(context)
-    private val firebaseDatabaseManager = FirebaseDatabaseManager("TEST")
     private val fileManager = FileManager(context)
 
     fun saveResult(result: ResultModel){
-        authenticateUser()
-        saveDataToTextFile(result)
-        saveResultToFirebase(result)
-        uploadFileToCloud()
-        killActivityIfExists()
+        if(ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED){
+            saveDataToTextFile(result)
+        }
+        else{
+            Toast.makeText(context,"CANNOT SAVE RESULT - WRITE PERMISSION NOT GRANTED",Toast.LENGTH_LONG).show()
+        }
+        authenticateUserAndWriteDataToCloud(result,context)
     }
 
-    private fun authenticateUser(){
-        firebaseLoginManager.provideUser()
-    }
+    private fun authenticateUserAndWriteDataToCloud(result: ResultModel, context: Context) =
+            firebaseLoginManager.provideUserAndPerformCloudOperations(result,context)
 
-    private fun saveResultToFirebase(result: ResultModel){
-        firebaseDatabaseManager.insertSensingRequestResultIntoDatabase(result)
-    }
-
-    private fun uploadFileToCloud(){
-        firebaseStorageManager.backupTxtFileToCloud()
-    }
 
     private fun saveDataToTextFile(result: ResultModel){
         fileManager.saveResultToFile(
@@ -43,11 +37,5 @@ class ResultSaver(var context: Context) {
                 result.answer_time,
                 result.comment
         )
-    }
-
-    private fun killActivityIfExists(){
-        //kill the activity
-        if (context is AppCompatActivity)
-            (context as AppCompatActivity).finishAndRemoveTask()
     }
 }

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
@@ -154,7 +155,13 @@ class ResultActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == PERMISSION_WRITE_STORAGE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this,"PERMISSION GRANTED TRY SAVING AGAIN",Toast.LENGTH_LONG).show()
                 parseSensingRequest()
+            }else{
+                Toast.makeText(this,"YOU MUST PROVIDE PERMISSIONS TO STORAGE",Toast.LENGTH_LONG).show()
+                requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        PERMISSION_WRITE_STORAGE
+                )
             }
       }
     }
