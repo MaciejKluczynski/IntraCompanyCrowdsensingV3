@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
@@ -42,21 +43,28 @@ class MainActivity : AppCompatActivity() {
     private fun activateLoadBtn(){
         val loadBtn = findViewById<Button>(R.id.load_button)
         loadBtn.setOnClickListener {
+            val nick = findViewById<EditText>(R.id.activityMainUserNameEditText).text.toString()
             //request write storage permission
             //android M - Marshmello 6.0
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
-                    (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
-                    PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)!=
-                    PackageManager.PERMISSION_GRANTED)){
-                requestPermissions(
-                        arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_READ_AND_WRITE_STORAGE
-                )
+            if(nick != ""){
+                sensingRequestsResultFilePathProvider.saveUserNameInSharedPrefs(nick)
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M &&
+                        (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
+                                PackageManager.PERMISSION_GRANTED ||
+                                checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)!=
+                                PackageManager.PERMISSION_GRANTED)){
+                    requestPermissions(
+                            arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            PERMISSION_READ_AND_WRITE_STORAGE
+                    )
+                }
+                //only when 2 permissions are provided - open file search
+                else openFileSearch()
+            }else{
+                Toast.makeText(this,"You have to provide nick first",Toast.LENGTH_LONG).show()
             }
-            //only when 2 permissions are provided - open file search
-            else openFileSearch()
+
         }
     }
 
@@ -96,7 +104,9 @@ class MainActivity : AppCompatActivity() {
                 val uri: Uri = data.data!!
                 sensingRequestsResultFilePathProvider.savePathInSharedPrefs(uri.toString())
                 val fileContent = fileManager.readFileContent(uri)
-                alertManager.scheduleAlerts(fileContent)
+                fileContent?.let {
+                    alertManager.scheduleAlerts(it)
+                }
             }
         }
 

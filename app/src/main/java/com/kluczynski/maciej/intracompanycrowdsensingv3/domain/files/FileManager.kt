@@ -42,8 +42,8 @@ class FileManager(var context: Context) {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun findAndReadFileAndQAndAbove(): String {
-        var content = ""
+    private fun findAndReadFileAndQAndAbove(): String? {
+        var content :String? = ""
         val uri = findFileAndGetUriAndQAndAbove()
         if (uri == null) {
             Toast.makeText(context, "\"results.txt\" not found", Toast.LENGTH_SHORT).show();
@@ -58,14 +58,23 @@ class FileManager(var context: Context) {
         return content
     }
 
-    fun readFileContent(uri: Uri): String {
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val size = inputStream!!.available()
-        val bytes = ByteArray(size)
-        inputStream.read(bytes)
-        inputStream.close()
-        Log.d("FILE CONTENT READ", bytes.toString())
-        return String(bytes)
+    fun readFileContent(uri: Uri): String? {
+        var text:String? = ""
+        try{
+            val inputStream = context.contentResolver.openInputStream(uri)
+            inputStream?.let {
+                val size = inputStream.available()
+                val bytes = ByteArray(size)
+                inputStream.read(bytes)
+                inputStream.close()
+                Log.d("FILE CONTENT READ", bytes.toString())
+                text = String(bytes)
+            }
+        }catch(e:IOException){
+            Toast.makeText(context,"CANNOT READ FILE - IT IS OPENED BY ANOTHER PROCESS",Toast.LENGTH_LONG).show()
+            text = null
+        }
+        return text
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -86,6 +95,8 @@ class FileManager(var context: Context) {
                     uri = ContentUris.withAppendedId(contentUri, id)
                     Log.d("FILE","ANDROID Q AND ABOVE URL FOUND SUCCESSFULLY $uri")
                     break
+                }else{
+                    Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -114,12 +125,19 @@ class FileManager(var context: Context) {
         }
     }
 
-    private fun overwriteText(file_content: String, uri: Uri, content: ResultModel) {
-        val outputStream = context.contentResolver.openOutputStream(uri, "rwt")
-        val overwriteData = file_content + objectToResultConverter.convertObjectToJson(content)
-        outputStream!!.write(overwriteData.toByteArray())
-        outputStream.close()
-        Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY")
+    private fun overwriteText(file_content: String?, uri: Uri, content: ResultModel) {
+        try{
+            val outputStream = context.contentResolver.openOutputStream(uri, "rwt")
+            val overwriteData = file_content + objectToResultConverter.convertObjectToJson(content)
+            outputStream?.let {
+                it.write(overwriteData.toByteArray())
+                it.close()
+                Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY")
+            }
+        }catch (e:IOException){
+            Toast.makeText(context, "Fail to overwrite file", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     @SuppressLint("ShowToast")
@@ -143,24 +161,34 @@ class FileManager(var context: Context) {
     }
 
     private fun createTextFileInSpecificLocationAndWriteDataToIt(result: ResultModel){
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
-        val file1 = File(dir)
-        if(!file1.exists()){
-            file1.mkdirs()
+        try{
+            val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
+            val file1 = File(dir)
+            if(!file1.exists()){
+                file1.mkdirs()
+            }
+            val file =
+                    File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", "results.txt")
+            val fos = FileOutputStream(file)
+            fos.write(objectToResultConverter.convertObjectToJson(result).toByteArray())
+            fos.close()
+            Log.d("FILE","ANDROID BELOW Q FILE CREATED SUCCESFULLY IN $dir")
+        }catch (e:IOException){
+            Toast.makeText(context,"FAILED TO CREADTE FILE ANDROID Q AND ABOVE",Toast.LENGTH_LONG).show()
         }
-        val file =
-                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", "results.txt")
-        val fos = FileOutputStream(file)
-        fos.write(objectToResultConverter.convertObjectToJson(result).toByteArray())
-        fos.close()
-        Log.d("FILE","ANDROID BELOW Q FILE CREATED SUCCESFULLY IN $dir")
+
     }
     private fun overwriteFile(result: ResultModel){
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
-        val fw: FileWriter = FileWriter("$dir/results.txt", true)
-        fw.append(objectToResultConverter.convertObjectToJson(result))
-        fw.close()
-        Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY IN $dir/results.txt")
+        try{
+            val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/"
+            val fw = FileWriter("$dir/results.txt", true)
+            fw.append(objectToResultConverter.convertObjectToJson(result))
+            fw.close()
+            Log.d("FILE","ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY IN $dir/results.txt")
+        }catch (e:IOException){
+            Toast.makeText(context, "CANNOT OVERWRITE FILE",Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun ifFileExists():Boolean{

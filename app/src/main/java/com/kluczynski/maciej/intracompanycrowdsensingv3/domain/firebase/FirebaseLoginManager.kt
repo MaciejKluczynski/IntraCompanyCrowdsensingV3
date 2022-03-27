@@ -7,13 +7,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsResultFilePathProvider
 
 class FirebaseLoginManager(var context: Context) {
 
     private lateinit var auth: FirebaseAuth
 
-    private val firebaseDatabaseManager = FirebaseDatabaseManager("TEST")
     private val firebaseStorageManager = FirebaseStorageManager(context)
+    private val sensingRequestsResultFilePathProvider = SensingRequestsResultFilePathProvider(context)
+    private val firebaseDatabaseManager = FirebaseDatabaseManager(
+            sensingRequestsResultFilePathProvider.getUserNameFromSharedPrefs())
 
     fun provideUserAndPerformCloudOperations(result: ResultModel,context: Context) {
         auth = FirebaseAuth.getInstance()
@@ -48,7 +51,9 @@ class FirebaseLoginManager(var context: Context) {
     }
 
     private fun uploadFileToCloud(){
-        firebaseStorageManager.backupTxtFileToCloud()?.addOnSuccessListener {
+        firebaseStorageManager.backupTxtFileToCloud(
+                sensingRequestsResultFilePathProvider.getUserNameFromSharedPrefs())
+                ?.addOnSuccessListener {
             Log.d("TAG", "file uploaded successfully")
             Toast.makeText(context,"File uploaded to cloud successfully",Toast.LENGTH_LONG).show()
         }

@@ -14,8 +14,8 @@ class FirebaseStorageManager(var context: Context) {
     private val fileManager = FileManager(context)
     var storageRef = FirebaseStorage.getInstance().reference
 
-    fun backupTxtFileToCloud(): UploadTask? {
-        val filesRef = storageRef.child("/abc")
+    fun backupTxtFileToCloud(nick:String): UploadTask? {
+        val filesRef = storageRef.child("/$nick")
         val url:Uri? = if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q){
             fileManager.findFileAndGetUriAndQAndAbove()
         } else{

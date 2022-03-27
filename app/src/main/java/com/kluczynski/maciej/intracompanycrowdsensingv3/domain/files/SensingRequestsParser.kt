@@ -13,7 +13,7 @@ class SensingRequestsParser(private var sensingRequestsResultFilePathProvider: S
                             var dateManager: DateManager
 ) {
 
-    private fun getSensingRequestsListAsString(): String {
+    private fun getSensingRequestsListAsString(): String? {
         //wczytanie danych z pliku txt do zmiennej
         val uri: Uri = Uri.parse(sensingRequestsResultFilePathProvider.getFilePathFromSharedPrefs())
         return fileManager.readFileContent(uri)
