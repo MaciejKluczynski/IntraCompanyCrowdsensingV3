@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsResultFilePathProvider
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val notificationManager = MyNotificationManager(this)
     private val fileManager = FileManager(this)
     private val alertManager = AlertManager(this, DateManager())
-    private val sensingRequestsResultFilePathProvider = SensingRequestsResultFilePathProvider(this)
+    private val sensingRequestsResultFilePathProvider = SharedPrefsProvider(this)
 
     @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {

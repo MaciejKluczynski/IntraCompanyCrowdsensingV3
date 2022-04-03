@@ -7,14 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsResultFilePathProvider
+import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
 
 class FirebaseLoginManager(var context: Context) {
 
     private lateinit var auth: FirebaseAuth
 
     private val firebaseStorageManager = FirebaseStorageManager(context)
-    private val sensingRequestsResultFilePathProvider = SensingRequestsResultFilePathProvider(context)
+    private val sensingRequestsResultFilePathProvider = SharedPrefsProvider(context)
     private val firebaseDatabaseManager = FirebaseDatabaseManager(
             sensingRequestsResultFilePathProvider.getUserNameFromSharedPrefs())
 
@@ -23,6 +23,7 @@ class FirebaseLoginManager(var context: Context) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             Log.d("USER ALREADY LOGGED IN", currentUser.email.toString())
+            Toast.makeText(context,"USER ALREADY LOGGED IN ${currentUser.email}",Toast.LENGTH_LONG).show()
             performCloudOperations(result)
         }else{
             performLogin(result)
@@ -38,14 +39,15 @@ class FirebaseLoginManager(var context: Context) {
         firebaseDatabaseManager.insertSensingRequestResultIntoDatabase(result)
                 .addOnSuccessListener { documentReference ->
                     Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-                    killActivityIfExists()
+                    Toast.makeText(context,"DocumentSnapshot added with ID: ${documentReference.id}",Toast.LENGTH_LONG).show()
+                    //killActivityIfExists()
                 }
                 .addOnFailureListener { e ->
                     Log.w("TAG", "Error adding document", e)
                     Toast.makeText(context,
                             "DOCUMENT NOT SAVED TO CLOUD - PLEASE CONTACT ADMINISTRATOR",
                             Toast.LENGTH_LONG).show()
-                    killActivityIfExists()
+                    //killActivityIfExists()
                 }
 
     }
@@ -56,7 +58,12 @@ class FirebaseLoginManager(var context: Context) {
                 ?.addOnSuccessListener {
             Log.d("TAG", "file uploaded successfully")
             Toast.makeText(context,"File uploaded to cloud successfully",Toast.LENGTH_LONG).show()
+                    killActivityIfExists()
         }
+                ?.addOnFailureListener {
+                    Toast.makeText(context,"File NOT uploaded to cloud - contact administrator",Toast.LENGTH_LONG).show()
+                    killActivityIfExists()
+                }
     }
 
     private fun killActivityIfExists(){
@@ -72,6 +79,7 @@ class FirebaseLoginManager(var context: Context) {
                     user = auth.currentUser
                     user?.let {
                         Log.d("LOGGED IN SUCCESSFULLY",it.email.toString())
+                        Toast.makeText(context, "SUCCESFULLY LOGGED IN ${it.email}",Toast.LENGTH_LONG).show()
                         performCloudOperations(result)
                     }
                 }

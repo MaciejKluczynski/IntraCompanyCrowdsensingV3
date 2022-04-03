@@ -7,10 +7,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.kluczynski.maciej.intracompanycrowdsensingv3.*
+import java.util.*
 
 class MyNotificationManager(val context: Context) {
 
@@ -35,17 +37,37 @@ class MyNotificationManager(val context: Context) {
         notificationManager.cancel(1)
     }
 
-    private fun createActivityPendingIntent(context: Context) : PendingIntent?{
+    private fun createActivityPendingIntent(context: Context,
+                                            content:String,
+                                            hint:String,
+                                            type:String,
+                                            why_ask:String,
+                                            questionTime:Date) : PendingIntent?{
         //start result activity on click on notification
-        val mainIntent = Intent(context, ResultActivity::class.java)
+        val mainIntent = Intent(context, ResultBroadcast::class.java)
         mainIntent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        return PendingIntent.getActivity(context,0,mainIntent, PendingIntent.FLAG_ONE_SHOT)
+        mainIntent.putExtra("Content", content)
+        mainIntent.putExtra("Hint", hint)
+        mainIntent.putExtra("QuestionType", type)
+        mainIntent.putExtra("WhyAsk", why_ask)
+        mainIntent.putExtra("QuestionTime", DateManager().convertDateToString(questionTime))
+        return PendingIntent.getBroadcast(context, 0, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
-    private fun createDismissPendingIntent(context: Context): PendingIntent? {
+    private fun createDismissPendingIntent(context: Context,
+                                           content:String,
+                                           hint:String,
+                                           type:String,
+                                           why_ask:String,
+                                           questionTime:Date): PendingIntent? {
         //start dismiss Broadcast as a result of dismissing notification
         val deleteIntent = Intent(context, DismissBroadcast::class.java)
-        deleteIntent.action = "notification_cancelled"
+        //deleteIntent.action = "notification_cancelled"
+        deleteIntent.putExtra("Content", content)
+        deleteIntent.putExtra("Hint", hint)
+        deleteIntent.putExtra("QuestionType", type)
+        deleteIntent.putExtra("WhyAsk", why_ask)
+        deleteIntent.putExtra("QuestionTime", DateManager().convertDateToString(questionTime))
         return PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
@@ -53,8 +75,15 @@ class MyNotificationManager(val context: Context) {
     //timeout not working in api<26
     //https://developer.android.com/reference/androidx/core/app/NotificationCompat.Builder#setTimeoutAfter(long)
     fun createCloseEndedNotification(context: Context,intent: Intent?){
-        val activityPendingIntent = createActivityPendingIntent(context)
-        val dismissPendingIntent = createDismissPendingIntent(context)
+        val content = intent!!.getStringExtra("Content")
+        val hint = intent!!.getStringExtra("Hint")
+        val type = intent!!.getStringExtra("QuestionType")
+        val why_ask = intent!!.getStringExtra("WhyAsk")
+        val questionTime = intent!!.getStringExtra("QuestionTime")
+        val dateManager = DateManager()
+        val date_internal = dateManager.getSimpleDateFormat().parse(questionTime)
+        val activityPendingIntent = createActivityPendingIntent(context,content!!,hint!!,type!!,why_ask!!,date_internal)
+        val dismissPendingIntent = createDismissPendingIntent(context, content, hint, type, why_ask,date_internal)
         //create notification
         val builder = NotificationCompat.Builder(context, "ICC")
         builder.setSmallIcon(R.mipmap.ic_launcher)

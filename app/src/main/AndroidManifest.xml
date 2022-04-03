@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".ResultActivity" />
         <receiver android:name=".ReminderBroadcast" />
+        <receiver android:name=".ResultBroadcast" />
         <receiver android:name=".DismissBroadcast" />
         <receiver android:name=".WakeupReceiver"/>
     </application>

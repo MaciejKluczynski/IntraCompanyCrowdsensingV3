@@ -14,18 +14,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsParser
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SensingRequestsResultFilePathProvider
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.firebase.FirebaseDatabaseManager
-import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.firebase.FirebaseStorageManager
+import java.util.*
 
 
 class ResultActivity : AppCompatActivity() {
 
-    private var fileManager = FileManager(this)
     private val currentDateProvider = DateManager()
-    private val sensingRequestsParser = SensingRequestsParser( SensingRequestsResultFilePathProvider(this),fileManager,currentDateProvider)
 
     companion object{
         const val PERMISSION_WRITE_STORAGE = 101
@@ -38,20 +32,37 @@ class ResultActivity : AppCompatActivity() {
         parseSensingRequest()
     }
 
+
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("SimpleDateFormat")
     private fun parseSensingRequest(){
-        val question = sensingRequestsParser.findAskedSensingRequest()
-        displayQuestion(question)
-        activateWhyAskBtn(question.reason)
-        activateHintBtn(question.hint)
+        val questionContent = intent.getStringExtra("Content")
+        val questionHint = intent.getStringExtra("Hint")
+        val questionType = intent.getStringExtra("QuestionType")
+        val questionWhyAsk = intent.getStringExtra("WhyAsk")
+        val questionTime = intent.getStringExtra("QuestionTime")
+        displayQuestion(questionContent!!)
+        activateWhyAskBtn(questionWhyAsk!!)
+        activateHintBtn(questionHint!!)
         activateAddCommentBtn()
         activateTooManyBtn()
-        activteDontKnowBtn(question)
-        if(question.questionType == "close_ended"){
-            createCloseEndedScreen(question)
-        } else if (question.questionType == "open"){
-            createOpenQuestionScreen(question)
+        activteDontKnowBtn(DateManager().getSimpleDateFormat().parse(questionTime!!)!!,questionContent)
+        if(questionType == "close_ended"){
+            createCloseEndedScreen(
+                    SensingRequestModel(
+                            questionContent,
+                            questionType,
+                            questionTime.toString(),
+                            questionWhyAsk,
+                            questionHint)
+            )
+        } else if (questionType == "numerical"){
+            createOpenQuestionScreen( SensingRequestModel(
+                    questionContent,
+                    questionType,
+                    questionTime.toString(),
+                    questionWhyAsk,
+                    questionHint))
         }
     }
 
@@ -63,10 +74,10 @@ class ResultActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun activteDontKnowBtn(question: SensingRequestModel) {
+    private fun activteDontKnowBtn(questionTime:Date, questionContent: String) {
         val dontKnowBtn = findViewById<Button>(R.id.resultActivityDontKnowBtn)
         dontKnowBtn.setOnClickListener {
-            saveDataToTxtFile(question.content,"DONT KNOW",question.time,currentDateProvider.getCurrentDate())
+            saveDataToTxtFile(questionContent,"DONT KNOW",questionTime.toString(),currentDateProvider.getCurrentDate())
         }
     }
 
@@ -95,9 +106,9 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayQuestion(question: SensingRequestModel){
+    private fun displayQuestion(questionContent: String){
         val result = findViewById<TextView>(R.id.resultTextView)
-        result.text = question.content
+        result.text = questionContent
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -107,7 +118,10 @@ class ResultActivity : AppCompatActivity() {
         val save_btn = findViewById<Button>(R.id.saveBtn)
         save_btn.visibility = View.VISIBLE
         save_btn.setOnClickListener {
-            saveDataToTxtFile(question.content, editTextNumber.text.toString(), question.time, currentDateProvider.getCurrentDate())
+            saveDataToTxtFile(question.content,
+                    editTextNumber.text.toString(),
+                    question.time,
+                    currentDateProvider.getCurrentDate())
         }
     }
 

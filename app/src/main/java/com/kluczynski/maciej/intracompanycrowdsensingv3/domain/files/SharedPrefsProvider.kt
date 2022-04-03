@@ -3,7 +3,7 @@ package com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files
 import android.content.Context
 import android.preference.PreferenceManager
 
-class SensingRequestsResultFilePathProvider(var context: Context) {
+class SharedPrefsProvider(var context: Context) {
     fun getFilePathFromSharedPrefs():String{
         //todo preferenceManager - shared preferences
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
