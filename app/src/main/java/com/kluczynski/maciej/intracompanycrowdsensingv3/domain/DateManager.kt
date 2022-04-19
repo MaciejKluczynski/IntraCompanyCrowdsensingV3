@@ -14,6 +14,7 @@ class DateManager {
 
     @SuppressLint("SimpleDateFormat")
     fun getSimpleDateFormat() = SimpleDateFormat("dd-M-yyyy HH:mm:ss")
+    fun getSimpleDateOnlyFormat() = SimpleDateFormat("dd-M-yyyy")
     fun getCurrentTimeMs(): Long = Calendar.getInstance().timeInMillis
     fun convertDateToMs(date:String):Long = getSimpleDateFormat().parse(date).time
     fun convertDateToString(date: Date):String = getSimpleDateFormat().format(date)

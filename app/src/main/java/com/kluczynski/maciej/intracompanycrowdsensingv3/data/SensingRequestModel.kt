@@ -1,9 +1,13 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3.data
 
 data class SensingRequestModel(
+        val sensing_request_id:String,
+        val priority:Int,
+        val frequency:String,
+        var desired_time_of_the_day:TimeOfTheDay?,
+        var desired_day_of_the_week:DayOfTheWeek?,
         val content:String,
         val questionType:String,
-        val time:String,
         val why_ask:String,
         val hint:String
         )

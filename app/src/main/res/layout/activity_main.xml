@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/load_button"
+        android:id="@+id/activity_main_load_sensing_requests_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LOAD SENSING REQUESTS"
@@ -29,7 +29,7 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/load_button"
+        app:layout_constraintBottom_toTopOf="@+id/activity_main_load_sensing_requests_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,6 +47,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
         app:layout_constraintVertical_bias="0.1" />
+
+    <Button
+        android:id="@+id/activity_main_load_user_preferences_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LOAD USER PREFERENCES"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_load_sensing_requests_btn"
+        app:layout_constraintVertical_bias="0.2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

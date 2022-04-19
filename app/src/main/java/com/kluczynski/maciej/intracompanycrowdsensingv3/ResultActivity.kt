@@ -48,21 +48,21 @@ class ResultActivity : AppCompatActivity() {
         activateTooManyBtn()
         activteDontKnowBtn(DateManager().getSimpleDateFormat().parse(questionTime!!)!!,questionContent)
         if(questionType == "close_ended"){
-            createCloseEndedScreen(
+           /* createCloseEndedScreen(
                     SensingRequestModel(
                             questionContent,
                             questionType,
                             questionTime.toString(),
                             questionWhyAsk,
-                            questionHint)
-            )
+                            questionHint)*/
+            //)
         } else if (questionType == "numerical"){
-            createOpenQuestionScreen( SensingRequestModel(
+            /*createOpenQuestionScreen( SensingRequestModel(
                     questionContent,
                     questionType,
                     questionTime.toString(),
                     questionWhyAsk,
-                    questionHint))
+                    questionHint))*/
         }
     }
 
@@ -118,10 +118,10 @@ class ResultActivity : AppCompatActivity() {
         val save_btn = findViewById<Button>(R.id.saveBtn)
         save_btn.visibility = View.VISIBLE
         save_btn.setOnClickListener {
-            saveDataToTxtFile(question.content,
+            /*saveDataToTxtFile(question.content,
                     editTextNumber.text.toString(),
                     question.time,
-                    currentDateProvider.getCurrentDate())
+                    currentDateProvider.getCurrentDate())*/
         }
     }
 
@@ -136,7 +136,7 @@ class ResultActivity : AppCompatActivity() {
         val yesBtn = findViewById<Button>(R.id.yes_btn)
         yesBtn.visibility = View.VISIBLE
         yesBtn.setOnClickListener {
-            saveDataToTxtFile(question.content, "YES", question.time, currentDateProvider.getCurrentDate())
+            //saveDataToTxtFile(question.content, "YES", question.time, currentDateProvider.getCurrentDate())
         }
     }
 
@@ -145,7 +145,7 @@ class ResultActivity : AppCompatActivity() {
         val noBtn = findViewById<Button>(R.id.no_btn)
         noBtn.visibility = View.VISIBLE
         noBtn.setOnClickListener {
-            saveDataToTxtFile(question.content, "NO", question.time, currentDateProvider.getCurrentDate())
+            //saveDataToTxtFile(question.content, "NO", question.time, currentDateProvider.getCurrentDate())
         }
     }
 

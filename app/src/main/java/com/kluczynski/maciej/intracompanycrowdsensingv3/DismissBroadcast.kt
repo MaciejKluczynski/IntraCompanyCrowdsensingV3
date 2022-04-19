@@ -16,13 +16,13 @@ class DismissBroadcast: BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("DISMISSED", "DISMISSED")
-        context?.let{
+        context?.let {
             val dateManager = DateManager()
             //zabezpieczenie - uzydkownik wylaczy permissiony do aplikacji podczas jej uzywania
-            if (checkSelfPermission(context,Manifest.permission.READ_EXTERNAL_STORAGE)==
-                    PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_GRANTED) {
                 //logika biznesowa - znalezienie pytania i udzielenie odpowiedzi
-                val content = intent!!.getStringExtra("Content")
+                /* val content = intent!!.getStringExtra("Content")
                 val type = intent!!.getStringExtra("QuestionType")
                 val questionTime = intent!!.getStringExtra("QuestionTime")
                 val why_ask = intent!!.getStringExtra("WhyAsk")
@@ -36,8 +36,9 @@ class DismissBroadcast: BroadcastReceiver() {
                         sensingRequest.time,
                         dateManager.getCurrentDate(),
                         ""))
-            }
+            }*/
 
+            }
         }
     }
 }

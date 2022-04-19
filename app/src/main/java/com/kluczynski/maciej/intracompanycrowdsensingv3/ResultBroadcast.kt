@@ -12,7 +12,7 @@ class ResultBroadcast:BroadcastReceiver() {
         val why_ask = intent.getStringExtra("WhyAsk")
         val hint = intent.getStringExtra("Hint")
 
-        var activityIntent = Intent(context,ResultActivity::class.java)
+        val activityIntent = Intent(context,ResultActivity::class.java)
         activityIntent.putExtra("Content",content)
         activityIntent.putExtra("QuestionType",type)
         activityIntent.putExtra("QuestionTime",questionTime)

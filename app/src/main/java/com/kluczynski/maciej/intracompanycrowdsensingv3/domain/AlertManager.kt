@@ -37,20 +37,17 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
 
     @SuppressLint("SimpleDateFormat")
     fun scheduleAlerts(sensingRequests:String){
-        //parsowanie tekstu na obiekty
-        val gson = Gson()
-        val sdf = dateManager.getSimpleDateFormat()
-        val sensingRequestList: List<SensingRequestModel> =
-                gson.fromJson(sensingRequests, Array<SensingRequestModel>::class.java).toList()
+
+        val sensingRequestList = SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(sensingRequests)
         for((iterator, i) in sensingRequestList.withIndex()){
             //tworzenie notyfikacji dla zadanych wartosci pytan
-            val date = sdf.parse(i.time)
-            createAlert(date,
+            //val date = sdf.parse(i.time)
+            /*createAlert(date,
                     iterator,
                     sensingRequestList[iterator].content,
                     sensingRequestList[iterator].hint,
                     sensingRequestList[iterator].questionType,
-                    sensingRequestList[iterator].why_ask)
+                    sensingRequestList[iterator].why_ask)*/
         }
         Toast.makeText(context,"File loaded successfully!", Toast.LENGTH_SHORT).show()
         killTheActivity()
