@@ -1,15 +1,13 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3.domain
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.TimeOfTheDay
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesModel
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -19,17 +17,17 @@ class SensingRequestsAllocationAlgorithm {
 
     companion object {
         const val NONE = "x"
-        const val MORNING = "MOR"
-        const val EARLY_MORNING = "EARLY_MOR"
+        const val MORNING = "MORNING"
+        const val EARLY_MORNING = "EARLY_MORNING"
         const val NOON = "NOON"
         const val AFTERNOON = "AFTERNOON"
-        const val EVENING = "EVE"
+        const val EVENING = "EVENING"
         const val MONDAY = "MONDAY"
         const val TUESDAY = "TUESDAY"
         const val WEDNESDAY = "WEDNESDAY"
         const val THURSDAY = "THURSDAY"
         const val FRIDAY = "FRIDAY"
-        const val EVERYDAY = "EVERYDAY"
+        const val EVERY_DAY = "EVERY_DAY"
         const val ONCE_A_WEEK = "ONCE_A_WEEK"
         const val ONCE_A_MONTH = "ONCE_A_MONTH"
         const val TEST_LOG_NAME = "TESTING_ALLOCATION_ALGORITHM"
@@ -137,7 +135,7 @@ class SensingRequestsAllocationAlgorithm {
 
     private fun getDaysInterval(interval: String): Long {
         return when (interval) {
-            EVERYDAY -> 1
+            EVERY_DAY -> 1
             ONCE_A_WEEK -> 7
             ONCE_A_MONTH -> 28
             else -> 0
@@ -155,9 +153,27 @@ class SensingRequestsAllocationAlgorithm {
         }
     }
 
-    private fun getBeginingOfTimeSlot(timeSlotName:String) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getBeginingOfTimeSlot(timeSlotName:String): LocalTime {
         return when(timeSlotName) {
+            MORNING -> LocalTime.of( 9 , 0 )
+            EARLY_MORNING -> LocalTime.of( 6 , 0 )
+            NOON -> LocalTime.of( 12 , 0 )
+            AFTERNOON -> LocalTime.of( 15 , 0 )
+            EVENING -> LocalTime.of( 18 , 0 )
+            else -> LocalTime.of( 24 , 0 )
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getEndOfTimeSlot(timeSlotName:String):LocalTime {
+        return when(timeSlotName) {
+            MORNING -> LocalTime.of( 12 , 0 )
+            EARLY_MORNING -> LocalTime.of( 9 , 0 )
+            NOON -> LocalTime.of( 15 , 0 )
+            AFTERNOON -> LocalTime.of( 18 , 0 )
+            EVENING -> LocalTime.of( 21 , 0 )
+            else -> LocalTime.of( 24 , 0 )
         }
     }
 
@@ -165,7 +181,7 @@ class SensingRequestsAllocationAlgorithm {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateDaysBetweenDates(firstDate: Date, secondDate: Date): Long {
         val formatter: DateTimeFormatter =
-            DateTimeFormatter.ofPattern(dateManager.getSimpleDateFormat().toString())
+            DateTimeFormatter.ofPattern(DateManager.DATE_AND_TIME_FORMAT_PATTERN)
         val dt1: LocalDateTime =
             LocalDate.parse(dateManager.convertDateToString(firstDate), formatter).atStartOfDay()
         val dt2: LocalDateTime =
@@ -175,8 +191,9 @@ class SensingRequestsAllocationAlgorithm {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getNextDate(tempDate: Date, plusDates: Long): Date {
+
         val formatter: DateTimeFormatter =
-            DateTimeFormatter.ofPattern(dateManager.getSimpleDateFormat().toString())
+            DateTimeFormatter.ofPattern(DateManager.DATE_AND_TIME_FORMAT_PATTERN)
         val dt: LocalDateTime =
             LocalDate.parse(dateManager.convertDateToString(tempDate), formatter).atStartOfDay()
         val ldt = LocalDateTime.from(dt).plusDays(plusDates)
@@ -222,6 +239,7 @@ class SensingRequestsAllocationAlgorithm {
         }
     }
 
+    @SuppressLint("LongLogTag")
     @RequiresApi(Build.VERSION_CODES.O)
     fun allocateSensingRequests(
         userPreferences: UserPreferencesModel,
@@ -264,21 +282,20 @@ class SensingRequestsAllocationAlgorithm {
             examinationPlan.forEach { examinationDay ->
                 val numberOfOccurence =
                     examinationDay.allocatedSensingRequests.filter { it.content == sensingRequest.content }.size
-                liczbaWystapienPytan[liczbaWystapienPytan.size].numberOfOccurence += numberOfOccurence
+                liczbaWystapienPytan[liczbaWystapienPytan.size-1].numberOfOccurence += numberOfOccurence
             }
         }
+
         liczbaWystapienPytan.forEach {
+            val divider = getDaysInterval(it.sensingRequest.frequency)
             it.expectedNumberOfOccurence =
-                (examinationLength / getDaysInterval(it.sensingRequest.frequency)).toInt()
+                (examinationLength / divider).toInt()
             it.differenceBetweenExpectedAndRealNumberOfOccurence =
                 it.expectedNumberOfOccurence - it.numberOfOccurence
         }
-        //todo petla zapobiegajaca zagladzaniu pytan o zerowej liczbie wystapien
 
-        //todo petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
 
         //planowanie dokladnych godzin dla pytania z rozkladem losowym
-
         examinationPlan.forEach { singleDayOfExaminationPlan ->
             val numberOfQuestionsPerSlotPerDay: MutableList<TimeSlotManager> = mutableListOf()
             userPreferredTimeSlots.forEach { timeSlot ->
@@ -307,24 +324,29 @@ class SensingRequestsAllocationAlgorithm {
 
             //planowanie konkretnych godzin wyswietlenia pytania
             numberOfQuestionsPerSlotPerDay.forEach { timeSlotManager ->
-                val timeDifference = 3//todo later adjust dinamically
-                val timeInterval = timeDifference/(timeSlotManager.numberOfQuestionsPerSlot+1)
-
-            }
-            /*
-            for j in liczba_pytan_na_slot_na_dany_dzien{
-            roznica_godzin = j.slot_czasowy.wez_godzine_konca - j.slot_czasowy.wez_godzine_poczatku
-            interwal = roznica_godzin/(j.ilosc_pytan_na_slot+1)
-            i = 0
-            while(i<j.ilosc_pytan_na_slot){
-                j.godziny.add(j.slot_czasowy.wez_godzine_poczatku+(i+1)*interwal,false)
-            }
-        }*/
-
+                val timeDifference = 3*60//todo later adjust dinamically
+                val timeInterval = timeDifference.toDouble()/(timeSlotManager.numberOfQuestionsPerSlot+1)
+                var i = 0
+                while(i<timeSlotManager.numberOfQuestionsPerSlot){
+                    val a = getBeginingOfTimeSlot(timeSlotManager.timeSlot).plusMinutes(
+                        (timeInterval*(i+1)).toLong())
+                    Log.d("AAA",a.toString())
+                    timeSlotManager.hoursToAllocate.add(TimingOccupancy(a,false))
+                    i++
+                }
             }
 
+            //przypisanie konkretnych godzin do senisng requests
+            singleDayOfExaminationPlan.allocatedSensingRequests.forEach { sensingRequest ->
+                numberOfQuestionsPerSlotPerDay.filter { it.timeSlot == sensingRequest.desired_time_of_the_day?.value }.forEach {
+                    timeSlotManager ->
+                    sensingRequest.time = timeSlotManager.hoursToAllocate.first { !it.ifOccupated }.time
+                }
+            }
         }
-
+        Log.d(TEST_LOG_NAME,examinationPlan.toString())
+        //todo petla zapobiegajaca zagladzaniu pytan o zerowej liczbie wystapien
+        //todo petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
     }
 
     private fun incrementeSensingRequestsPerSlot(
@@ -344,15 +366,6 @@ class SensingRequestsAllocationAlgorithm {
 
 
     /*for i in plan_badania{
-        //planowanie konkretnych godzin wyswietlenia pytania
-        for j in liczba_pytan_na_slot_na_dany_dzien{
-            roznica_godzin = j.slot_czasowy.wez_godzine_konca - j.slot_czasowy.wez_godzine_poczatku
-            interwal = roznica_godzin/(j.ilosc_pytan_na_slot+1)
-            i = 0
-            while(i<j.ilosc_pytan_na_slot){
-                j.godziny.add(j.slot_czasowy.wez_godzine_poczatku+(i+1)*interwal,false)
-            }
-        }
         //przypisanie konkretnych godzin do senisng requests
         for j in i.tresci_pytan_na_dany_dzien_ze_slotami{
             j.time = wez_pierwsza_niewzieta_godzine_ze_slotu(liczba_pytan_na_slot_na_dany_dzien,j.time_slot)
@@ -368,7 +381,7 @@ data class SensingRequestTimeOfOccurence(
 )
 
 data class TimingOccupancy(
-    val time: String,
+    val time: LocalTime,
     val ifOccupated: Boolean
 )
 

@@ -1,5 +1,7 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3.data
 
+import java.time.LocalTime
+
 data class SensingRequestModel(
         val sensing_request_id:String,
         val priority:Int,
@@ -9,6 +11,7 @@ data class SensingRequestModel(
         val content:String,
         val questionType:String,
         val why_ask:String,
-        val hint:String
+        val hint:String,
+        var time:LocalTime,
         )
 //time jest w formacie SimpleDateFormat("dd-M-yyyy HH:mm:ss")
