@@ -13,11 +13,15 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.kluczynski.maciej.intracompanycrowdsensingv3.data.DayOfTheWeek
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
+import com.kluczynski.maciej.intracompanycrowdsensingv3.data.TimeOfTheDay
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
+import java.time.LocalTime
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -63,14 +67,17 @@ class MainActivity : AppCompatActivity() {
             if (nick != "") {
                 sensingRequestsResultFilePathProvider.saveUserNameInSharedPrefs(nick)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                        (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                                PackageManager.PERMISSION_GRANTED ||
-                                checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) !=
-                                PackageManager.PERMISSION_GRANTED)) {
+                    (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                            PackageManager.PERMISSION_GRANTED ||
+                            checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                            PackageManager.PERMISSION_GRANTED)
+                ) {
                     requestPermissions(
-                            arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                            PERMISSION_READ_AND_WRITE_STORAGE
+                        arrayOf(
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ),
+                        PERMISSION_READ_AND_WRITE_STORAGE
                     )
                 }
                 //only when 2 permissions are provided - open file search
@@ -83,17 +90,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_READ_AND_WRITE_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission to READ AND WRITE storage Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Permission to READ AND WRITE storage Granted",
+                    Toast.LENGTH_SHORT
+                ).show()
                 openFileSearch(READ_DATABASE_REQUEST_CODE)
             } else {
-                Toast.makeText(this, "Permission to READ AND WRITE storage NOT Granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Permission to READ AND WRITE storage NOT Granted",
+                    Toast.LENGTH_SHORT
+                ).show()
                 finishAndRemoveTask()
             }
         }
@@ -109,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //metoda ktora sie wykonuje po wybraniu pliku
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == READ_DATABASE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -119,11 +134,14 @@ class MainActivity : AppCompatActivity() {
                 sensingRequestsResultFilePathProvider.savePathInSharedPrefs(uri.toString())
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    sensingRequests = SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(fileContent)
-                    Log.d("TEST",sensingRequests.toString())
+                    sensingRequests =
+                        SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
+                            fileContent
+                        )
+                    Log.d("TEST", sensingRequests.toString())
                     activateLoadUserPreferencesBtn()
-                }else{
-                    Toast.makeText(this,"Sensing requests file is empty",Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Sensing requests file is empty", Toast.LENGTH_LONG).show()
                     finishAndRemoveTask()
                 }
             }
@@ -135,16 +153,64 @@ class MainActivity : AppCompatActivity() {
                 sensingRequestsResultFilePathProvider.savePathInSharedPrefs(uri.toString())
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    userPreferences = UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
-                    Log.d("TEST",userPreferences.toString())
+                    userPreferences =
+                        UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
+                    Log.d("TEST", userPreferences.toString())
                     //todo planowanie alertow - algorytm alokacji oraz wyswietlanie notyfikcaji i zabicie aktywanosci
-                    SensingRequestsAllocationAlgorithm().allocateSensingRequests(userPreferences, sensingRequests)
-                }else{
-                    Toast.makeText(this,"User preferences file is empty",Toast.LENGTH_LONG).show()
+                    FileManager(this).createLogsFile(
+                        convertExaminationToJsonObjects(
+                            SensingRequestsAllocationAlgorithm().allocateSensingRequests(
+                                userPreferences,
+                                sensingRequests
+                            )
+                        )
+                    )
+                } else {
+                    Toast.makeText(this, "User preferences file is empty", Toast.LENGTH_LONG).show()
                     finishAndRemoveTask()
                 }
             }
         }
-
     }
+
+    private fun convertExaminationToJsonObjects(plan: MutableList<ExaminationPlanModel>): List<ExaminationPlanString> {
+        val tempPlan: MutableList<ExaminationPlanString> = mutableListOf()
+        for (i in plan){
+            val tempSensingRequests = mutableListOf<SensingRequestModelString>()
+            for (j in i.allocatedSensingRequests){
+                tempSensingRequests.add(SensingRequestModelString(
+                    sensing_request_id = j.sensing_request_id,
+                    priority = j.priority,
+                    frequency = j.frequency,
+                    desired_time_of_the_day = j.desired_time_of_the_day?.value,
+                    desired_day_of_the_week = j.desired_day_of_the_week?.value,
+                    content = j.content,
+                    questionType = j.questionType,
+                    why_ask = j.why_ask,
+                    hint = j.hint,
+                    time = j.time.toString(),
+                ))
+            }
+            tempPlan.add(ExaminationPlanString(i.singleDateOfExaminationPlan,tempSensingRequests))
+        }
+        return tempPlan
+    }
+
+    data class ExaminationPlanString(
+        val singleDateOfExaminationPlan: Date,
+        val allocatedSensingRequests: MutableList<SensingRequestModelString>
+    )
+
+    data class SensingRequestModelString(
+        val sensing_request_id:String,
+        val priority:Int,
+        val frequency:String,
+        var desired_time_of_the_day: String?,
+        var desired_day_of_the_week: String?,
+        val content:String,
+        val questionType:String,
+        val why_ask:String,
+        val hint:String,
+        var time: String,
+    )
 }

@@ -12,6 +12,6 @@ data class SensingRequestModel(
         val questionType:String,
         val why_ask:String,
         val hint:String,
-        var time:LocalTime,
+        var time:LocalTime?,
         )
 //time jest w formacie SimpleDateFormat("dd-M-yyyy HH:mm:ss")

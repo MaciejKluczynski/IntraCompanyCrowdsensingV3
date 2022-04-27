@@ -1,7 +1,5 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3.data
 
-import java.util.*
-
 data class UserPreferencesModel(
         val ids:List<String>,
         val preferred_times:List<String>,

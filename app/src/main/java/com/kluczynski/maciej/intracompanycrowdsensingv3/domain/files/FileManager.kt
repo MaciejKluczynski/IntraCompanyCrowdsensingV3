@@ -13,6 +13,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import com.kluczynski.maciej.intracompanycrowdsensingv3.MainActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.ObjectToResultConverter
 import java.io.*
@@ -23,6 +24,23 @@ import java.io.*
 class FileManager(var context: Context) {
 
     private var objectToResultConverter: ObjectToResultConverter = ObjectToResultConverter()
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun createLogsFile(content: List<MainActivity.ExaminationPlanString>) {
+        try {
+            val values = ContentValues()
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "logs.txt")
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/")
+            val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
+            val outputStream: OutputStream? = context.contentResolver.openOutputStream(uri!!)
+            outputStream!!.write(objectToResultConverter.convertObjectToJson(content).toByteArray())
+            outputStream.close()
+            Toast.makeText(context, "File created successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            Toast.makeText(context, "Fail to create file", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun createFileAndQAndAbove(content: ResultModel) {

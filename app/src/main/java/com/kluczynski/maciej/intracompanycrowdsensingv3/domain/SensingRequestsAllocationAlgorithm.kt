@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.kluczynski.maciej.intracompanycrowdsensingv3.data.DayOfTheWeek
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.TimeOfTheDay
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesModel
@@ -44,6 +45,7 @@ class SensingRequestsAllocationAlgorithm {
             //bierzemy z listy element o najwyzszym priorytecie zawsze
             val tempSensingRequest = provideHighestPrioritySensingRequest(sensingRequests)
 
+
             //warunek gdy jest zgodnosc z uzytkownikiem - alokacja w zgodnym dniu tygodnia
             tempSensingRequest.desired_day_of_the_week?.let {
                 allocateSensingRequestInSpecificDay(
@@ -72,15 +74,28 @@ class SensingRequestsAllocationAlgorithm {
     ) {
         //warunek gdy nie ma zgodnosci z uzytkownikiem - alokacja w dolonej dacie
         var tempDate = startDate
-        examinationPlan.filter {
-            ifWeCanAllocateSensingRequestForDate(
-                examinationPlanDay = it,
-                tempDate = tempDate,
-                maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily
-            )
-        }.forEach { dayOfExamination ->
-            dayOfExamination.allocatedSensingRequests.add(tempSensingRequest)
-            tempDate = getNextDate(tempDate, getDaysInterval(tempSensingRequest.frequency))
+        for (dayOfExamination in examinationPlan) {
+            if (canWeAllocateSensingRequestForDate(
+                    examinationPlanDay = dayOfExamination,
+                    tempDate = tempDate,
+                    maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily
+                )
+            ) {
+                val copyOfTempSensingRequest = SensingRequestModel(
+                    sensing_request_id = tempSensingRequest.sensing_request_id,
+                    priority = tempSensingRequest.priority,
+                    frequency = tempSensingRequest.frequency,
+                    desired_time_of_the_day = tempSensingRequest.desired_time_of_the_day,
+                    desired_day_of_the_week = tempSensingRequest.desired_day_of_the_week,
+                    content = tempSensingRequest.content,
+                    questionType = tempSensingRequest.questionType,
+                    why_ask = tempSensingRequest.why_ask,
+                    hint = tempSensingRequest.hint,
+                    time = tempSensingRequest.time,
+                )
+                dayOfExamination.allocatedSensingRequests.add(copyOfTempSensingRequest)
+                tempDate = getNextDate(tempDate, getDaysInterval(tempSensingRequest.frequency))
+            }
         }
     }
 
@@ -92,17 +107,31 @@ class SensingRequestsAllocationAlgorithm {
         tempSensingRequest: SensingRequestModel
     ) {
         var tempDate = startDate
-        examinationPlan.filter {
-            ifWeCanAllocateSensingRequestForPreferredDay(
-                examinationPlanDay = it,
-                tempDate = tempDate,
-                maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily,
-                desiredDayOfTheWeek = tempSensingRequest.desired_day_of_the_week!!.value
-            )
-        }.forEach { dayOfExamination ->
-            dayOfExamination.allocatedSensingRequests.add(tempSensingRequest)
-            tempDate = getNextDate(tempDate, getDaysInterval(tempSensingRequest.frequency))
+        for (dayOfExamination in examinationPlan) {
+            if (canWeAllocateSensingRequestForSpecificDay(
+                    examinationPlanDay = dayOfExamination,
+                    tempDate = tempDate,
+                    maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily,
+                    desiredDayOfTheWeek = tempSensingRequest.desired_day_of_the_week!!.value
+                )
+            ) {
+                val copyOfTempSensingRequest = SensingRequestModel(
+                    sensing_request_id = tempSensingRequest.sensing_request_id,
+                    priority = tempSensingRequest.priority,
+                    frequency = tempSensingRequest.frequency,
+                    desired_time_of_the_day = tempSensingRequest.desired_time_of_the_day,
+                    desired_day_of_the_week = tempSensingRequest.desired_day_of_the_week,
+                    content = tempSensingRequest.content,
+                    questionType = tempSensingRequest.questionType,
+                    why_ask = tempSensingRequest.why_ask,
+                    hint = tempSensingRequest.hint,
+                    time = tempSensingRequest.time,
+                )
+                dayOfExamination.allocatedSensingRequests.add(copyOfTempSensingRequest)
+                tempDate = getNextDate(tempDate, getDaysInterval(tempSensingRequest.frequency))
+            }
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -116,7 +145,7 @@ class SensingRequestsAllocationAlgorithm {
         return tempSensingRequest
     }
 
-    private fun ifWeCanAllocateSensingRequestForDate(
+    private fun canWeAllocateSensingRequestForDate(
         examinationPlanDay: ExaminationPlanModel,
         tempDate: Date,
         maxNumberOfQuestionsDaily: Int
@@ -124,7 +153,7 @@ class SensingRequestsAllocationAlgorithm {
         examinationPlanDay.singleDateOfExaminationPlan >= tempDate &&
                 examinationPlanDay.allocatedSensingRequests.size < maxNumberOfQuestionsDaily
 
-    private fun ifWeCanAllocateSensingRequestForPreferredDay(
+    private fun canWeAllocateSensingRequestForSpecificDay(
         examinationPlanDay: ExaminationPlanModel,
         tempDate: Date,
         maxNumberOfQuestionsDaily: Int,
@@ -154,26 +183,26 @@ class SensingRequestsAllocationAlgorithm {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getBeginingOfTimeSlot(timeSlotName:String): LocalTime {
-        return when(timeSlotName) {
-            MORNING -> LocalTime.of( 9 , 0 )
-            EARLY_MORNING -> LocalTime.of( 6 , 0 )
-            NOON -> LocalTime.of( 12 , 0 )
-            AFTERNOON -> LocalTime.of( 15 , 0 )
-            EVENING -> LocalTime.of( 18 , 0 )
-            else -> LocalTime.of( 24 , 0 )
+    private fun getBeginingOfTimeSlot(timeSlotName: String): LocalTime {
+        return when (timeSlotName) {
+            MORNING -> LocalTime.of(9, 0)
+            EARLY_MORNING -> LocalTime.of(6, 0)
+            NOON -> LocalTime.of(12, 0)
+            AFTERNOON -> LocalTime.of(15, 0)
+            EVENING -> LocalTime.of(18, 0)
+            else -> LocalTime.of(24, 0)
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getEndOfTimeSlot(timeSlotName:String):LocalTime {
-        return when(timeSlotName) {
-            MORNING -> LocalTime.of( 12 , 0 )
-            EARLY_MORNING -> LocalTime.of( 9 , 0 )
-            NOON -> LocalTime.of( 15 , 0 )
-            AFTERNOON -> LocalTime.of( 18 , 0 )
-            EVENING -> LocalTime.of( 21 , 0 )
-            else -> LocalTime.of( 24 , 0 )
+    private fun getEndOfTimeSlot(timeSlotName: String): LocalTime {
+        return when (timeSlotName) {
+            MORNING -> LocalTime.of(12, 0)
+            EARLY_MORNING -> LocalTime.of(9, 0)
+            NOON -> LocalTime.of(15, 0)
+            AFTERNOON -> LocalTime.of(18, 0)
+            EVENING -> LocalTime.of(21, 0)
+            else -> LocalTime.of(24, 0)
         }
     }
 
@@ -191,7 +220,6 @@ class SensingRequestsAllocationAlgorithm {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getNextDate(tempDate: Date, plusDates: Long): Date {
-
         val formatter: DateTimeFormatter =
             DateTimeFormatter.ofPattern(DateManager.DATE_AND_TIME_FORMAT_PATTERN)
         val dt: LocalDateTime =
@@ -244,7 +272,7 @@ class SensingRequestsAllocationAlgorithm {
     fun allocateSensingRequests(
         userPreferences: UserPreferencesModel,
         sensingRequests: MutableList<SensingRequestModel>
-    ) {
+    ): MutableList<ExaminationPlanModel> {
         val dateFormat = dateManager.getSimpleDateOnlyFormat()
         //variables initialization
         val copyOfSensingRequests = sensingRequests.toMutableList()
@@ -261,7 +289,13 @@ class SensingRequestsAllocationAlgorithm {
             //in java.util Monday = 1 and then ... Sunday = 7
             userPreferredDays.add(getDayNumber(userPreferredDay))
         }
-        allocateDatesForExamination(startDate, userPreferredDays, examinationPlan, endDate)
+        allocateDatesForExamination(
+            startDate = startDate,
+            userPreferredDays = userPreferredDays,
+            examinationPlan = examinationPlan,
+            endDate = endDate
+        )
+
         determineConsistencyBetweenSensingRequestAndUser(
             sensingRequests = copyOfSensingRequests,
             userPreferredDays = userPreferredDays,
@@ -274,30 +308,23 @@ class SensingRequestsAllocationAlgorithm {
             maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily,
             startDate = startDate
         )
-        Log.d("TEST", examinationPlan.toString())
-        Log.d("TEST", sensingRequests.toString())
+
         val liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence> = mutableListOf()
-        sensingRequests.forEach { sensingRequest ->
-            liczbaWystapienPytan.add(SensingRequestTimeOfOccurence(sensingRequest, 0, 0, 0))
-            examinationPlan.forEach { examinationDay ->
-                val numberOfOccurence =
-                    examinationDay.allocatedSensingRequests.filter { it.content == sensingRequest.content }.size
-                liczbaWystapienPytan[liczbaWystapienPytan.size-1].numberOfOccurence += numberOfOccurence
-            }
-        }
+        calculateOccurenceNumberSensingRequests(
+            sensingRequests = sensingRequests,
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationPlan = examinationPlan
+        )
 
-        liczbaWystapienPytan.forEach {
-            val divider = getDaysInterval(it.sensingRequest.frequency)
-            it.expectedNumberOfOccurence =
-                (examinationLength / divider).toInt()
-            it.differenceBetweenExpectedAndRealNumberOfOccurence =
-                it.expectedNumberOfOccurence - it.numberOfOccurence
-        }
+        calculateExpectedAndDifferenceOccurence(
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationLength = examinationLength
+        )
 
-
-        //planowanie dokladnych godzin dla pytania z rozkladem losowym
+        //planowanie dokladnych godzin dla pytania
         examinationPlan.forEach { singleDayOfExaminationPlan ->
             val numberOfQuestionsPerSlotPerDay: MutableList<TimeSlotManager> = mutableListOf()
+            Log.d("SIZE",singleDayOfExaminationPlan.allocatedSensingRequests.toString())
             userPreferredTimeSlots.forEach { timeSlot ->
                 numberOfQuestionsPerSlotPerDay.add(TimeSlotManager(timeSlot, 0, mutableListOf()))
             }
@@ -324,29 +351,95 @@ class SensingRequestsAllocationAlgorithm {
 
             //planowanie konkretnych godzin wyswietlenia pytania
             numberOfQuestionsPerSlotPerDay.forEach { timeSlotManager ->
-                val timeDifference = 3*60//todo later adjust dinamically
-                val timeInterval = timeDifference.toDouble()/(timeSlotManager.numberOfQuestionsPerSlot+1)
+                val timeDifference = 3 * 60//todo later adjust dinamically
+                val timeInterval =
+                    timeDifference.toDouble() / (timeSlotManager.numberOfQuestionsPerSlot + 1)
                 var i = 0
-                while(i<timeSlotManager.numberOfQuestionsPerSlot){
-                    val a = getBeginingOfTimeSlot(timeSlotManager.timeSlot).plusMinutes(
-                        (timeInterval*(i+1)).toLong())
-                    Log.d("AAA",a.toString())
-                    timeSlotManager.hoursToAllocate.add(TimingOccupancy(a,false))
+                while (i < timeSlotManager.numberOfQuestionsPerSlot) {
+                    val a = calculateTimeForQuestion(
+                        timeSlotManager = timeSlotManager,
+                        timeInterval = timeInterval,
+                        numberOfQuestionForDay = i
+                    )
+                    Log.d("AAA", a.toString())
+                    timeSlotManager.hoursToAllocate.add(TimingOccupancy(a, false))
                     i++
                 }
             }
+            allocateTimesToSensingRequests(
+                singleDayOfExaminationPlan = singleDayOfExaminationPlan,
+                numberOfQuestionsPerSlotPerDay = numberOfQuestionsPerSlotPerDay
+            )
+            Log.d("DAY", singleDayOfExaminationPlan.toString())
+            examinationPlan.forEach { singleDayOfExaminationPlan ->
+                Log.d("DAY2", singleDayOfExaminationPlan.toString())
+            }
+            numberOfQuestionsPerSlotPerDay.clear()
+        }
 
-            //przypisanie konkretnych godzin do senisng requests
-            singleDayOfExaminationPlan.allocatedSensingRequests.forEach { sensingRequest ->
-                numberOfQuestionsPerSlotPerDay.filter { it.timeSlot == sensingRequest.desired_time_of_the_day?.value }.forEach {
-                    timeSlotManager ->
-                    sensingRequest.time = timeSlotManager.hoursToAllocate.first { !it.ifOccupated }.time
+        Log.d("PLAN", examinationPlan.toString())
+        return examinationPlan
+
+        //todo petla zapobiegajaca zagladzaniu pytan o zerowej liczbie wystapien
+        //todo petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun calculateTimeForQuestion(
+        timeSlotManager: TimeSlotManager,
+        timeInterval: Double,
+        numberOfQuestionForDay: Int
+    ) = getBeginingOfTimeSlot(timeSlotManager.timeSlot).plusMinutes(
+        (timeInterval * (numberOfQuestionForDay + 1)).toLong()
+    )
+
+    private fun allocateTimesToSensingRequests(
+        singleDayOfExaminationPlan: ExaminationPlanModel,
+        numberOfQuestionsPerSlotPerDay: MutableList<TimeSlotManager>
+    ) {
+        //przypisanie konkretnych godzin do senisng requests
+        /*singleDayOfExaminationPlan.allocatedSensingRequests.forEach { sensingRequest ->
+            val timeSlotManager =
+                numberOfQuestionsPerSlotPerDay.first { it.timeSlot == sensingRequest.desired_time_of_the_day?.value }
+            sensingRequest.time =
+                timeSlotManager.hoursToAllocate.first { !it.ifOccupated }.time
+            timeSlotManager.hoursToAllocate.first { !it.ifOccupated }.ifOccupated = true
+        }*/
+        for (sensingRequest in singleDayOfExaminationPlan.allocatedSensingRequests){
+            for (timeSlot in numberOfQuestionsPerSlotPerDay){
+                if(sensingRequest.desired_time_of_the_day?.value == timeSlot.timeSlot){
+                    sensingRequest.time = timeSlot.hoursToAllocate.first { !it.ifOccupated }.time
+                    timeSlot.hoursToAllocate.first { !it.ifOccupated }.ifOccupated = true
                 }
             }
         }
-        Log.d(TEST_LOG_NAME,examinationPlan.toString())
-        //todo petla zapobiegajaca zagladzaniu pytan o zerowej liczbie wystapien
-        //todo petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
+    }
+
+    private fun calculateExpectedAndDifferenceOccurence(
+        liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>,
+        examinationLength: Long
+    ) {
+        liczbaWystapienPytan.forEach {
+            it.expectedNumberOfOccurence =
+                (examinationLength / getDaysInterval(it.sensingRequest.frequency)).toInt()
+            it.differenceBetweenExpectedAndRealNumberOfOccurence =
+                it.expectedNumberOfOccurence - it.numberOfOccurence
+        }
+    }
+
+    private fun calculateOccurenceNumberSensingRequests(
+        sensingRequests: MutableList<SensingRequestModel>,
+        liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>,
+        examinationPlan: MutableList<ExaminationPlanModel>
+    ) {
+        sensingRequests.forEach { sensingRequest ->
+            liczbaWystapienPytan.add(SensingRequestTimeOfOccurence(sensingRequest, 0, 0, 0))
+            examinationPlan.forEach { examinationDay ->
+                val numberOfOccurence =
+                    examinationDay.allocatedSensingRequests.filter { it.content == sensingRequest.content }.size
+                liczbaWystapienPytan[liczbaWystapienPytan.size - 1].numberOfOccurence += numberOfOccurence
+            }
+        }
     }
 
     private fun incrementeSensingRequestsPerSlot(
@@ -364,13 +457,6 @@ class SensingRequestsAllocationAlgorithm {
             TimeOfTheDay.valueOf(it)
         }
 
-
-    /*for i in plan_badania{
-        //przypisanie konkretnych godzin do senisng requests
-        for j in i.tresci_pytan_na_dany_dzien_ze_slotami{
-            j.time = wez_pierwsza_niewzieta_godzine_ze_slotu(liczba_pytan_na_slot_na_dany_dzien,j.time_slot)
-        }
-    }*/
 }
 
 data class SensingRequestTimeOfOccurence(
@@ -382,7 +468,7 @@ data class SensingRequestTimeOfOccurence(
 
 data class TimingOccupancy(
     val time: LocalTime,
-    val ifOccupated: Boolean
+    var ifOccupated: Boolean
 )
 
 data class TimeSlotManager(
