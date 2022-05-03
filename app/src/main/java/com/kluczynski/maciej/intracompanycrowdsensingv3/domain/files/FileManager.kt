@@ -115,7 +115,8 @@ class FileManager(var context: Context) {
                     break
                 }
             }
-            Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
+            if(uri == null)
+                Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
         }
         return uri
     }
