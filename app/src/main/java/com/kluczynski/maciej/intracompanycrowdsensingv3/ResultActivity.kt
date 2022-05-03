@@ -136,7 +136,7 @@ class ResultActivity : AppCompatActivity() {
         val yesBtn = findViewById<Button>(R.id.yes_btn)
         yesBtn.visibility = View.VISIBLE
         yesBtn.setOnClickListener {
-            //saveDataToTxtFile(question.content, "YES", question.time, currentDateProvider.getCurrentDate())
+            saveDataToTxtFile(question.content, "YES", question.time.toString(), currentDateProvider.getCurrentDate())
         }
     }
 
@@ -145,7 +145,7 @@ class ResultActivity : AppCompatActivity() {
         val noBtn = findViewById<Button>(R.id.no_btn)
         noBtn.visibility = View.VISIBLE
         noBtn.setOnClickListener {
-            //saveDataToTxtFile(question.content, "NO", question.time, currentDateProvider.getCurrentDate())
+            saveDataToTxtFile(question.content, "NO", question.time.toString(), currentDateProvider.getCurrentDate())
         }
     }
 

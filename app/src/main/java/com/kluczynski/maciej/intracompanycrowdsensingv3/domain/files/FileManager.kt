@@ -113,10 +113,9 @@ class FileManager(var context: Context) {
                     uri = ContentUris.withAppendedId(contentUri, id)
                     Log.d("FILE","ANDROID Q AND ABOVE URL FOUND SUCCESSFULLY $uri")
                     break
-                }else{
-                    Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
                 }
             }
+            Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
         }
         return uri
     }

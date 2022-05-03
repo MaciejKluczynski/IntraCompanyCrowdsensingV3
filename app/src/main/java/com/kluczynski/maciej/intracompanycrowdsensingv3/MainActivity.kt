@@ -20,7 +20,10 @@ import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesMode
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
+import java.lang.String.format
+import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -157,14 +160,13 @@ class MainActivity : AppCompatActivity() {
                         UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
                     Log.d("TEST", userPreferences.toString())
                     //todo planowanie alertow - algorytm alokacji oraz wyswietlanie notyfikcaji i zabicie aktywanosci
-                    FileManager(this).createLogsFile(
-                        convertExaminationToJsonObjects(
-                            SensingRequestsAllocationAlgorithm().allocateSensingRequests(
-                                userPreferences,
-                                sensingRequests
-                            )
-                        )
+                    val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(
+                        userPreferences,
+                        sensingRequests
                     )
+                    val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
+                    FileManager(this).createLogsFile(examinationPlanString)
+                    alertManager.scheduleAlerts(examinationPlan)
                 } else {
                     Toast.makeText(this, "User preferences file is empty", Toast.LENGTH_LONG).show()
                     finishAndRemoveTask()
@@ -173,44 +175,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun convertExaminationToJsonObjects(plan: MutableList<ExaminationPlanModel>): List<ExaminationPlanString> {
         val tempPlan: MutableList<ExaminationPlanString> = mutableListOf()
-        for (i in plan){
+        for (i in plan) {
             val tempSensingRequests = mutableListOf<SensingRequestModelString>()
-            for (j in i.allocatedSensingRequests){
-                tempSensingRequests.add(SensingRequestModelString(
-                    sensing_request_id = j.sensing_request_id,
-                    priority = j.priority,
-                    frequency = j.frequency,
-                    desired_time_of_the_day = j.desired_time_of_the_day?.value,
-                    desired_day_of_the_week = j.desired_day_of_the_week?.value,
-                    content = j.content,
-                    questionType = j.questionType,
-                    why_ask = j.why_ask,
-                    hint = j.hint,
-                    time = j.time.toString(),
-                ))
+            for (j in i.allocatedSensingRequests) {
+                tempSensingRequests.add(
+                    SensingRequestModelString(
+                        sensing_request_id = j.sensing_request_id,
+                        priority = j.priority,
+                        frequency = j.frequency,
+                        desired_time_of_the_day = j.desired_time_of_the_day?.value,
+                        desired_day_of_the_week = j.desired_day_of_the_week?.value,
+                        content = j.content,
+                        questionType = j.questionType,
+                        why_ask = j.why_ask,
+                        hint = j.hint,
+                        time = j.time.toString(),
+                    )
+                )
             }
-            tempPlan.add(ExaminationPlanString(i.singleDateOfExaminationPlan,tempSensingRequests))
+            val date = i.singleDateOfExaminationPlan.format(DateTimeFormatter.ofPattern(DateManager.DATE_FORMAT_PATTERN))
+            tempPlan.add(ExaminationPlanString(date, tempSensingRequests))
         }
         return tempPlan
     }
 
     data class ExaminationPlanString(
-        val singleDateOfExaminationPlan: Date,
+        val singleDateOfExaminationPlan: String,
         val allocatedSensingRequests: MutableList<SensingRequestModelString>
     )
 
     data class SensingRequestModelString(
-        val sensing_request_id:String,
-        val priority:Int,
-        val frequency:String,
+        val sensing_request_id: String,
+        val priority: Int,
+        val frequency: String,
         var desired_time_of_the_day: String?,
         var desired_day_of_the_week: String?,
-        val content:String,
-        val questionType:String,
-        val why_ask:String,
-        val hint:String,
+        val content: String,
+        val questionType: String,
+        val why_ask: String,
+        val hint: String,
         var time: String,
     )
 }
