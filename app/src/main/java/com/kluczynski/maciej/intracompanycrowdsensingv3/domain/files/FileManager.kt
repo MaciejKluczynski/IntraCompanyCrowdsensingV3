@@ -27,6 +27,7 @@ class FileManager(var context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun createLogsFile(content: List<MainActivity.ExaminationPlanString>) {
+        //todo to samo dla android <10
         try {
             val values = ContentValues()
             values.put(MediaStore.MediaColumns.DISPLAY_NAME, "logs.txt")

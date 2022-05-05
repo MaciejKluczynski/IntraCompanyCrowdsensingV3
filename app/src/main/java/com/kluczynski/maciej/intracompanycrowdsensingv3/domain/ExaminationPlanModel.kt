@@ -6,5 +6,5 @@ import java.util.*
 
 data class ExaminationPlanModel(
     val singleDateOfExaminationPlan: LocalDate,
-    val allocatedSensingRequests: MutableList<SensingRequestModel>
+    var allocatedSensingRequests: MutableList<SensingRequestModel>
 )

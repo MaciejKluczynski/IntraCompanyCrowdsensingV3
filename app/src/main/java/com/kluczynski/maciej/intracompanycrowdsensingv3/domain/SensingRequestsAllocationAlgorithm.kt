@@ -152,7 +152,9 @@ class SensingRequestsAllocationAlgorithm {
         maxNumberOfQuestionsDaily: Int,
         desiredDayOfTheWeek: String
     ): Boolean = examinationPlanDay.singleDateOfExaminationPlan >= tempDate &&
-            examinationPlanDay.singleDateOfExaminationPlan.dayOfWeek.value == getDayNumber(desiredDayOfTheWeek) &&
+            examinationPlanDay.singleDateOfExaminationPlan.dayOfWeek.value == getDayNumber(
+        desiredDayOfTheWeek
+    ) &&
             examinationPlanDay.allocatedSensingRequests.size < maxNumberOfQuestionsDaily
 
     private fun getDaysInterval(interval: String): Long {
@@ -244,11 +246,17 @@ class SensingRequestsAllocationAlgorithm {
         userPreferences: UserPreferencesModel,
         sensingRequests: MutableList<SensingRequestModel>
     ): MutableList<ExaminationPlanModel> {
-        val dateFormat = dateManager.getSimpleDateOnlyFormat()
         //variables initialization
-        val copyOfSensingRequests = sensingRequests.toMutableList()
-        val startDate = LocalDate.parse(userPreferences.start_date,dateManager.getSimpleDateOnlyFormat())
-        val endDate = LocalDate.parse(userPreferences.end_date,dateManager.getSimpleDateOnlyFormat())
+        var copyOfSensingRequests = sensingRequests.toMutableList()
+        val sensingRequestsIds = userPreferences.ids
+        copyOfSensingRequests = copyOfSensingRequests.filter { sensingRequest ->
+            sensingRequest.sensing_request_id in sensingRequestsIds
+        } as MutableList<SensingRequestModel>
+        val copyOfSensingRequests2 = copyOfSensingRequests.toMutableList()
+        val startDate =
+            LocalDate.parse(userPreferences.start_date, dateManager.getSimpleDateOnlyFormat())
+        val endDate =
+            LocalDate.parse(userPreferences.end_date, dateManager.getSimpleDateOnlyFormat())
         val tempUserPreferredDays = userPreferences.preferred_days
         val userPreferredDays: MutableList<Int> = mutableListOf()
         val userPreferredTimeSlots = userPreferences.preferred_times
@@ -281,21 +289,16 @@ class SensingRequestsAllocationAlgorithm {
         )
 
         val liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence> = mutableListOf()
-        calculateOccurenceNumberSensingRequests(
-            sensingRequests = sensingRequests,
+        doTheCalculationsOccurrenceSensingRequests(
+            sensingRequests = copyOfSensingRequests2,
             liczbaWystapienPytan = liczbaWystapienPytan,
-            examinationPlan = examinationPlan
-        )
-
-        calculateExpectedAndDifferenceOccurence(
-            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationPlan = examinationPlan,
             examinationLength = examinationLength
         )
 
         //planowanie dokladnych godzin dla pytania
         examinationPlan.forEach { singleDayOfExaminationPlan ->
             val numberOfQuestionsPerSlotPerDay: MutableList<TimeSlotManager> = mutableListOf()
-            Log.d("SIZE", singleDayOfExaminationPlan.allocatedSensingRequests.toString())
             userPreferredTimeSlots.forEach { timeSlot ->
                 numberOfQuestionsPerSlotPerDay.add(TimeSlotManager(timeSlot, 0, mutableListOf()))
             }
@@ -346,12 +349,142 @@ class SensingRequestsAllocationAlgorithm {
             )
         }
 
-        //todo petla zapobiegajaca zagladzaniu pytan o zerowej liczbie wystapien
-        //todo petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
-        //todo różnicowanie czasu wyświetlania pytań
         changeRandomDisplayTime(examinationPlan)
+        //to juz dziala ;P
+        insertQuestionWithZeroApperances(
+            sensingRequests = copyOfSensingRequests2,
+            examinationPlan = examinationPlan,
+            maxNumberOfQuestionsDaily = maxNumberOfQuestionsDaily,
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationLength = examinationLength
+        )
+        //do poprawy
+        increasePriorityOfRareQuestions(
+            sensingRequests = copyOfSensingRequests2,
+            examinationPlan = examinationPlan,
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationLength = examinationLength
+        )
+
         Log.d("PLAN", examinationPlan.toString())
         return examinationPlan
+    }
+
+    private fun requirementsNotMet(liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>): Boolean {
+        for (sensingRequest in liczbaWystapienPytan) {
+            if (sensingRequest.differenceBetweenExpectedAndRealNumberOfOccurence < sensingRequest.expectedNumberOfOccurence) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun increasePriorityOfRareQuestions(
+        liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>,
+        sensingRequests: MutableList<SensingRequestModel>,
+        examinationPlan: MutableList<ExaminationPlanModel>,
+        examinationLength: Long
+    ) {
+        if (requirementsNotMet(liczbaWystapienPytan)) {
+            //petla zwiekszajaca priorytet zadko zadanych pytan arbitrarnie 10 (bo trzeba cos ustalic)
+            // 10 razy wstawiamy najbardziej niedocenione pytanie w miejsce najbardziej docenionego
+            for (iterator in 0..9) {
+                val mostOftenSensingRequest =
+                    liczbaWystapienPytan.minByOrNull { it.differenceBetweenExpectedAndRealNumberOfOccurence }
+                val leastOftenSenisngRequest =
+                    liczbaWystapienPytan.maxByOrNull { it.differenceBetweenExpectedAndRealNumberOfOccurence }
+                if (mostOftenSensingRequest != null && leastOftenSenisngRequest != null) {
+                    insertSensingRequestIntoAnother(
+                        mostOftenSensingRequest.sensingRequest,
+                        leastOftenSenisngRequest.sensingRequest
+                    )
+                }
+                //wyczysc listy z liczba wystapien
+                clearNumberLists(liczbaWystapienPytan)
+                //przelicz jeszcze raz liczbe wystapien pytan
+                doTheCalculationsOccurrenceSensingRequests(
+                    sensingRequests = sensingRequests,
+                    liczbaWystapienPytan = liczbaWystapienPytan,
+                    examinationPlan = examinationPlan,
+                    examinationLength = examinationLength
+                )
+            }
+        }
+    }
+
+    private fun insertQuestionWithZeroApperances(
+        sensingRequests: MutableList<SensingRequestModel>,
+        examinationPlan: MutableList<ExaminationPlanModel>,
+        maxNumberOfQuestionsDaily: Int,
+        liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>,
+        examinationLength: Long
+    ) {
+        if (sensingRequests.size < examinationPlan.size * maxNumberOfQuestionsDaily) {
+            liczbaWystapienPytan.filter { sensingRequestTimeOfOccurence ->
+                sensingRequestTimeOfOccurence.numberOfOccurence == 0
+            }.forEach { sensingRequestTimeOfOccurence ->
+                //znajdz pytanie zadane najwieksza liczbe razy
+                val maxSensingRequest = liczbaWystapienPytan.maxByOrNull { it.numberOfOccurence }
+                //znajdz pierwsze wystapienie tego pytania w planie badania
+                if (maxSensingRequest != null) {
+                    outer@ for (day in examinationPlan) {
+                        for (sensingRequest in day.allocatedSensingRequests) {
+                            if (sensingRequest.content == maxSensingRequest.sensingRequest.content) {
+                                insertSensingRequestIntoAnother(
+                                    sensingRequest,
+                                    sensingRequestTimeOfOccurence.sensingRequest
+                                )
+                                break@outer
+                            }
+                        }
+                    }
+                    //wyczysc listy z liczba wystapien
+                    clearNumberLists(liczbaWystapienPytan)
+                    //przelicz jeszcze raz liczbe wystapien pytan
+                    doTheCalculationsOccurrenceSensingRequests(
+                        sensingRequests = sensingRequests,
+                        liczbaWystapienPytan = liczbaWystapienPytan,
+                        examinationPlan = examinationPlan,
+                        examinationLength = examinationLength
+                    )
+                }
+            }
+        }
+    }
+
+    private fun insertSensingRequestIntoAnother(
+        sensingRequestToChange: SensingRequestModel,
+        sensingRequestToInsert: SensingRequestModel
+    ) {
+        sensingRequestToChange.why_ask = sensingRequestToInsert.why_ask
+        sensingRequestToChange.frequency = sensingRequestToInsert.frequency
+        sensingRequestToChange.priority = sensingRequestToInsert.priority
+        sensingRequestToChange.questionType = sensingRequestToInsert.questionType
+        sensingRequestToChange.content = sensingRequestToInsert.content
+        sensingRequestToChange.hint = sensingRequestToInsert.hint
+        sensingRequestToChange.sensing_request_id = sensingRequestToInsert.sensing_request_id
+    }
+
+    private fun clearNumberLists(liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>) {
+        liczbaWystapienPytan.clear()
+    }
+
+    private fun doTheCalculationsOccurrenceSensingRequests(
+        sensingRequests: MutableList<SensingRequestModel>,
+        liczbaWystapienPytan: MutableList<SensingRequestTimeOfOccurence>,
+        examinationPlan: MutableList<ExaminationPlanModel>,
+        examinationLength: Long
+    ) {
+        calculateOccurenceNumberSensingRequests(
+            sensingRequests = sensingRequests,
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationPlan = examinationPlan
+        )
+
+        calculateExpectedAndDifferenceOccurence(
+            liczbaWystapienPytan = liczbaWystapienPytan,
+            examinationLength = examinationLength
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -359,7 +492,7 @@ class SensingRequestsAllocationAlgorithm {
         examinationPlan.forEach { singleDayOfExamination ->
             singleDayOfExamination.allocatedSensingRequests.forEach { sensingRequest ->
                 sensingRequest.time = sensingRequest.time?.plusMinutes(getRandomTimeVarriancy())
-                Log.d("TIME",sensingRequest.time.toString())
+                Log.d("TIME", sensingRequest.time.toString())
             }
         }
     }
