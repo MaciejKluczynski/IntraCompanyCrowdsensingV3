@@ -6,14 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import com.kluczynski.maciej.intracompanycrowdsensingv3.MainActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.ReminderBroadcast
-import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import java.util.*
 
 class AlertManager(var context: Context, var dateManager: DateManager) {

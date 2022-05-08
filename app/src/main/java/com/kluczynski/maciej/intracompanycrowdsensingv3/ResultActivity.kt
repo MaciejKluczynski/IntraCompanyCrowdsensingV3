@@ -1,9 +1,11 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -12,11 +14,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
-import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class ResultActivity : AppCompatActivity() {
@@ -27,22 +25,25 @@ class ResultActivity : AppCompatActivity() {
         const val PERMISSION_WRITE_STORAGE = 101
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
-        parseSensingRequest()
+        parseSensingRequest(intent)
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        parseSensingRequest(intent)
+    }
+
     @SuppressLint("SimpleDateFormat")
-    private fun parseSensingRequest() {
-        val questionContent = intent.getStringExtra("Content")
-        val questionHint = intent.getStringExtra("Hint")
-        val questionType = intent.getStringExtra("QuestionType")
-        val questionWhyAsk = intent.getStringExtra("WhyAsk")
-        val questionTime = intent.getStringExtra("QuestionTime")
+    private fun parseSensingRequest(intent: Intent?) {
+        val questionContent = intent?.getStringExtra("Content")
+        val questionHint = intent?.getStringExtra("Hint")
+        val questionType = intent?.getStringExtra("QuestionType")
+        val questionWhyAsk = intent?.getStringExtra("WhyAsk")
+        val questionTime = intent?.getStringExtra("QuestionTime")
         displayQuestion(questionContent!!)
         activateWhyAskBtn(questionWhyAsk!!)
         activateHintBtn(questionHint!!)
@@ -67,7 +68,7 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     private fun activteDontKnowBtn(questionTime: String, questionContent: String) {
         val dontKnowBtn = findViewById<Button>(R.id.resultActivityDontKnowBtn)
         dontKnowBtn.setOnClickListener {
@@ -110,17 +111,16 @@ class ResultActivity : AppCompatActivity() {
         result.text = questionContent
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun createOpenQuestionScreen(content: String, time: String) {
         val editTextNumber = findViewById<EditText>(R.id.editTextNumber)
         editTextNumber.visibility = View.VISIBLE
-        val save_btn = findViewById<Button>(R.id.saveBtn)
-        save_btn.visibility = View.VISIBLE
+        val saveBtn = findViewById<Button>(R.id.saveBtn)
+        saveBtn.visibility = View.VISIBLE
         val yesBtn = findViewById<Button>(R.id.yes_btn)
         yesBtn.visibility = View.GONE
         val noBtn = findViewById<Button>(R.id.no_btn)
         noBtn.visibility = View.GONE
-        save_btn.setOnClickListener {
+        saveBtn.setOnClickListener {
             saveDataToTxtFile(
                 content,
                 editTextNumber.text.toString(),
@@ -130,13 +130,11 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun createCloseEndedScreen(content:String, time:String) {
         activateYesBtn(content = content, time = time)
         activateNoBtn(content = content, time = time)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun activateYesBtn(content:String, time:String) {
         val yesBtn = findViewById<Button>(R.id.yes_btn)
         yesBtn.visibility = View.VISIBLE
@@ -150,7 +148,6 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun activateNoBtn(content:String, time:String) {
         val noBtn = findViewById<Button>(R.id.no_btn)
         noBtn.visibility = View.VISIBLE
@@ -164,7 +161,6 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private fun saveDataToTxtFile(
         content: String,
         result: String,
@@ -186,7 +182,6 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -197,7 +192,7 @@ class ResultActivity : AppCompatActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "PERMISSION GRANTED TRY SAVING AGAIN", Toast.LENGTH_LONG)
                     .show()
-                parseSensingRequest()
+                parseSensingRequest(intent)
             } else {
                 Toast.makeText(this, "YOU MUST PROVIDE PERMISSIONS TO STORAGE", Toast.LENGTH_LONG)
                     .show()

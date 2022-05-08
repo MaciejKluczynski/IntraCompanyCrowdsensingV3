@@ -15,8 +15,7 @@ class DateManager {
     }
     fun getCurrentDate():String{
         val date = Calendar.getInstance().time
-        val sdf = getSimpleDateFormat()
-        return sdf.format(date)
+        return getSimpleDateFormat().format(date)
     }
 
     @SuppressLint("SimpleDateFormat")

@@ -390,7 +390,7 @@ class SensingRequestsAllocationAlgorithm {
             // 10 razy wstawiamy najbardziej niedocenione pytanie w miejsce najbardziej docenionego
             for (iterator in 0..9) {
                 val mostOftenSensingRequest =
-                    liczbaWystapienPytan.minByOrNull { it.differenceBetweenExpectedAndRealNumberOfOccurence }
+                    liczbaWystapienPytan.maxByOrNull { it.numberOfOccurence }
                 val leastOftenSenisngRequest =
                     liczbaWystapienPytan.maxByOrNull { it.differenceBetweenExpectedAndRealNumberOfOccurence }
                 if (mostOftenSensingRequest != null && leastOftenSenisngRequest != null) {
