@@ -48,7 +48,6 @@ class ResultActivity : AppCompatActivity() {
         activateWhyAskBtn(questionWhyAsk!!)
         activateHintBtn(questionHint!!)
         activateAddCommentBtn()
-        activateTooManyBtn()
         val questionTimeString = DateManager().getSimpleDateFormat().parse(questionTime!!)!!.toString()
         activteDontKnowBtn(
             questionTimeString,
@@ -58,13 +57,6 @@ class ResultActivity : AppCompatActivity() {
             createCloseEndedScreen(content = questionContent, time = questionTimeString)
         } else if (questionType == "numerical") {
             createOpenQuestionScreen(content = questionContent, time = questionTimeString)
-        }
-    }
-
-    private fun activateTooManyBtn() {
-        val tooManyBtn = findViewById<Button>(R.id.resultActivityTooManyBtn)
-        tooManyBtn.setOnClickListener {
-
         }
     }
 
