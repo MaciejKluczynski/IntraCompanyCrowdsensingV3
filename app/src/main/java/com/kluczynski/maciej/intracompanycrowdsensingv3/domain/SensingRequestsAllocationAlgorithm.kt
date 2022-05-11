@@ -325,9 +325,8 @@ class SensingRequestsAllocationAlgorithm {
 
             //planowanie konkretnych godzin wyswietlenia pytania
             numberOfQuestionsPerSlotPerDay.forEach { timeSlotManager ->
-                val timeDifference = 3 * 60//todo later adjust dinamically
-                val timeInterval =
-                    timeDifference.toDouble() / (timeSlotManager.numberOfQuestionsPerSlot + 1)
+                val timeDifference = (getEndOfTimeSlot(timeSlotManager.timeSlot).hour - getBeginingOfTimeSlot(timeSlotManager.timeSlot).hour)* 60
+                val timeInterval = timeDifference.toDouble() / (timeSlotManager.numberOfQuestionsPerSlot + 1)
                 var i = 0
                 while (i < timeSlotManager.numberOfQuestionsPerSlot) {
 
