@@ -5,7 +5,6 @@ import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesMode
 
 class UserPreferencesParser {
     fun parseTextToUserPreferencesModel(fileContent:String):UserPreferencesModel{
-        val gson = Gson()
-        return gson.fromJson(fileContent, UserPreferencesModel::class.java)
+        return Gson().fromJson(fileContent, UserPreferencesModel::class.java)
     }
 }

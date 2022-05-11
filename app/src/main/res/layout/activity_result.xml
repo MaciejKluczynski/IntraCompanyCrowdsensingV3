@@ -148,15 +148,8 @@
         android:layout_height="wrap_content"
         android:text="don't know"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/no_btn"
         app:layout_constraintStart_toStartOf="@+id/yes_btn"
         app:layout_constraintTop_toBottomOf="@+id/yes_btn" />
-
-    <Button
-        android:id="@+id/resultActivityTooManyBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Too many"
-        app:layout_constraintEnd_toEndOf="@+id/no_btn"
-        app:layout_constraintTop_toTopOf="@+id/resultActivityDontKnowBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -134,14 +134,9 @@ class MainActivity : AppCompatActivity() {
             if (data != null) {
                 //wczytanie danych z pliku txt do zmiennej
                 val uri: Uri = data.data!!
-                sensingRequestsResultFilePathProvider.savePathInSharedPrefs(uri.toString())
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    sensingRequests =
-                        SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
-                            fileContent
-                        )
-                    Log.d("TEST", sensingRequests.toString())
+                    sensingRequests = SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(fileContent)
                     activateLoadUserPreferencesBtn()
                 } else {
                     Toast.makeText(this, "Sensing requests file is empty", Toast.LENGTH_LONG).show()
@@ -153,17 +148,10 @@ class MainActivity : AppCompatActivity() {
             if (data != null) {
                 //wczytanie danych z pliku txt do zmiennej
                 val uri: Uri = data.data!!
-                sensingRequestsResultFilePathProvider.savePathInSharedPrefs(uri.toString())
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    userPreferences =
-                        UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
-                    Log.d("TEST", userPreferences.toString())
-                    //todo planowanie alertow - algorytm alokacji oraz wyswietlanie notyfikcaji i zabicie aktywanosci
-                    val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(
-                        userPreferences,
-                        sensingRequests
-                    )
+                    userPreferences = UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
+                    val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(userPreferences, sensingRequests)
                     val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
                     FileManager(this).createLogsFile(examinationPlanString)
                     alertManager.scheduleAlerts(examinationPlan)
