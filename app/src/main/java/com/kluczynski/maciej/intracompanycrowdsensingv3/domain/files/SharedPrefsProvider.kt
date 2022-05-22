@@ -2,6 +2,7 @@ package com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files
 
 import android.content.Context
 import android.preference.PreferenceManager
+import java.util.*
 
 class SharedPrefsProvider(var context: Context) {
     fun getUserNameFromSharedPrefs():String{
@@ -11,11 +12,12 @@ class SharedPrefsProvider(var context: Context) {
         return filePath.toString()
     }
 
-    fun saveUserNameInSharedPrefs(username:String){
+    fun generateAndSaveUserNameInSharedPrefs(){
         //todo shared prefs - update
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = preferences.edit()
-        editor.putString("username", username)
+        val id = UUID.randomUUID().toString()
+        editor.putString("username", id)
         editor.apply()
     }
 }

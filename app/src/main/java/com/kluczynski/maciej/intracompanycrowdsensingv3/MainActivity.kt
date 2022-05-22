@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -57,11 +56,10 @@ class MainActivity : AppCompatActivity() {
     private fun activateLoadSensingRequestsBtn() {
         val loadBtn = findViewById<Button>(R.id.activity_main_load_sensing_requests_btn)
         loadBtn.setOnClickListener {
-            val nick = findViewById<EditText>(R.id.activityMainUserNameEditText).text.toString()
             //request write storage permission
             //android M - Marshmello 6.0
             if (nick != "") {
-                sensingRequestsResultFilePathProvider.saveUserNameInSharedPrefs(nick)
+                sensingRequestsResultFilePathProvider.generateAndSaveUserNameInSharedPrefs()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                             PackageManager.PERMISSION_GRANTED ||

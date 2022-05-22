@@ -24,13 +24,20 @@ import java.io.*
 class FileManager(var context: Context) {
 
     private var objectToResultConverter: ObjectToResultConverter = ObjectToResultConverter()
+    private val sharedPrefsProvider = SharedPrefsProvider(context)
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun createScheduleFile(content: List<MainActivity.ExaminationPlanString>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            createFileAndQAndAbove(content, "schedule.txt")
+            createFileAndQAndAbove(
+                content,
+                "${sharedPrefsProvider.getUserNameFromSharedPrefs()}_schedule.txt"
+            )
         } else {
-            createTextFileAndWriteDataToItAndroidBelowQ(content, "schedule.txt")
+            createTextFileAndWriteDataToItAndroidBelowQ(
+                content,
+                "${sharedPrefsProvider.getUserNameFromSharedPrefs()}_schedule.txt"
+            )
         }
 
     }
@@ -59,7 +66,8 @@ class FileManager(var context: Context) {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun findAndReadFileAndQAndAbove(): String? {
         var content: String? = ""
-        val uri = findFileAndGetUriAndQAndAbove("results.txt")
+        val uri =
+            findFileAndGetUriAndQAndAbove("${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt")
         if (uri == null) {
             Toast.makeText(context, "\"results.txt\" not found", Toast.LENGTH_SHORT).show();
         } else {
@@ -135,7 +143,8 @@ class FileManager(var context: Context) {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun overwriteFileAndQAndAbove(content: ResultModel) {
         val fileContent = findAndReadFileAndQAndAbove()
-        val uri = findFileAndGetUriAndQAndAbove("results.txt")
+        val uri =
+            findFileAndGetUriAndQAndAbove("${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt")
         if (uri == null) {
             Toast.makeText(context, "\"result.txt\" not found", Toast.LENGTH_SHORT).show();
         } else {
@@ -168,10 +177,10 @@ class FileManager(var context: Context) {
         questionContent: String,
         result: String,
         sensingRequestAskTime: String,
-        timeDisplayQuestionOnScreen:String,
+        timeDisplayQuestionOnScreen: String,
         answerTime: String,
         comment: String,
-        sensingRequestId:String
+        sensingRequestId: String
     ) {
         val result = ResultModel(
             questionContent = questionContent,
@@ -183,16 +192,22 @@ class FileManager(var context: Context) {
             sensingRequestId = sensingRequestId
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (findFileAndGetUriAndQAndAbove("results.txt") != null) {
+            if (findFileAndGetUriAndQAndAbove("${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt") != null) {
                 overwriteFileAndQAndAbove(result)
             } else {
-                createFileAndQAndAbove(result, "results.txt")
+                createFileAndQAndAbove(
+                    result,
+                    "${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt"
+                )
             }
         } else {
             if (ifFileExists()) {
                 overwriteFile(result)
             } else {
-                createTextFileAndWriteDataToItAndroidBelowQ(result, "results.txt")
+                createTextFileAndWriteDataToItAndroidBelowQ(
+                    result,
+                    "${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt"
+                )
             }
         }
     }
@@ -223,10 +238,16 @@ class FileManager(var context: Context) {
         try {
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                 .toString() + "/Sensing requests data/"
-            val fw = FileWriter("$dir/results.txt", true)
+            val fw = FileWriter(
+                "$dir/${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt",
+                true
+            )
             fw.append(objectToResultConverter.convertObjectToJson(result))
             fw.close()
-            Log.d("FILE", "ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY IN $dir/results.txt")
+            Log.d(
+                "FILE",
+                "ANDROID BELOW Q FILE OVERWRITTEN SUCCESFULLY IN $dir/${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt"
+            )
         } catch (e: IOException) {
             Toast.makeText(context, "CANNOT OVERWRITE FILE", Toast.LENGTH_LONG).show()
         }
@@ -235,7 +256,8 @@ class FileManager(var context: Context) {
     private fun ifFileExists(): Boolean {
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                .toString() + "/Sensing requests data/", "results.txt"
+                .toString() + "/Sensing requests data/",
+            "${sharedPrefsProvider.getUserNameFromSharedPrefs()}_results.txt"
         )
         return file.exists()
     }
