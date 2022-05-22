@@ -14,28 +14,37 @@ class ResultSaver(var context: Context) {
     private val firebaseLoginManager = FirebaseLoginManager(context)
     private val fileManager = FileManager(context)
 
-    fun saveResult(result: ResultModel){
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED){
+    fun saveResult(result: ResultModel) {
+        if (checkIfPermissionToWriteStorageIsGranted()) {
             saveDataToTextFile(result)
+        } else {
+            Toast.makeText(
+                context,
+                "CANNOT SAVE RESULT - WRITE PERMISSION NOT GRANTED",
+                Toast.LENGTH_LONG
+            ).show()
         }
-        else{
-            Toast.makeText(context,"CANNOT SAVE RESULT - WRITE PERMISSION NOT GRANTED",Toast.LENGTH_LONG).show()
-        }
-        authenticateUserAndWriteDataToCloud(result,context)
+        authenticateUserAndWriteDataToCloud(result, context)
     }
 
     private fun authenticateUserAndWriteDataToCloud(result: ResultModel, context: Context) =
-            firebaseLoginManager.provideUserAndPerformCloudOperations(result,context)
+        firebaseLoginManager.provideUserAndPerformCloudOperations(result, context)
 
 
-    private fun saveDataToTextFile(result: ResultModel){
+    private fun saveDataToTextFile(result: ResultModel) {
         fileManager.saveResultToFile(
-                result.content,
-                result.result,
-                result.ask_time,
-                result.answer_time,
-                result.comment
+            questionContent = result.questionContent,
+            result = result.result,
+            sensingRequestAskTime = result.askTimeSensingRequest,
+            answerTime = result.answerTime,
+            comment = result.comment,
+            sensingRequestId = result.sensingRequestId,
+            timeDisplayQuestionOnScreen = result.timeDisplayQuestionOnScreen,
         )
     }
+
+    private fun checkIfPermissionToWriteStorageIsGranted() = ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    ) == PackageManager.PERMISSION_GRANTED
 }

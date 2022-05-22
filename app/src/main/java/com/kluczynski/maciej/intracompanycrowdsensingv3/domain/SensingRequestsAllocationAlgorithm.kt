@@ -349,7 +349,6 @@ class SensingRequestsAllocationAlgorithm {
         }
 
         changeRandomDisplayTime(examinationPlan)
-        //to juz dziala ;P
         insertQuestionWithZeroApperances(
             sensingRequests = copyOfSensingRequests2,
             examinationPlan = examinationPlan,
@@ -357,7 +356,6 @@ class SensingRequestsAllocationAlgorithm {
             liczbaWystapienPytan = liczbaWystapienPytan,
             examinationLength = examinationLength
         )
-        //do poprawy
         increasePriorityOfRareQuestions(
             sensingRequests = copyOfSensingRequests2,
             examinationPlan = examinationPlan,

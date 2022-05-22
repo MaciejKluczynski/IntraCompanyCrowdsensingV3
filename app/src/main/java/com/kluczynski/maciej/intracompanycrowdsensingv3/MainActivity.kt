@@ -7,24 +7,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.kluczynski.maciej.intracompanycrowdsensingv3.data.DayOfTheWeek
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
-import com.kluczynski.maciej.intracompanycrowdsensingv3.data.TimeOfTheDay
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
-import java.lang.String.format
-import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -153,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                     userPreferences = UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
                     val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(userPreferences, sensingRequests)
                     val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
-                    FileManager(this).createLogsFile(examinationPlanString)
+                    FileManager(this).createScheduleFile(examinationPlanString)
                     alertManager.scheduleAlerts(examinationPlan)
                 } else {
                     Toast.makeText(this, "User preferences file is empty", Toast.LENGTH_LONG).show()

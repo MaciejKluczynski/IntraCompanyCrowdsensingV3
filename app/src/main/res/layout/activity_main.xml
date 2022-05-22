@@ -24,7 +24,7 @@
         android:fontFamily="sans-serif-medium"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Welcome to our ICC examination! Please select a sensing requests file by the button below:"
+        android:text="Welcome to ICC Please select a sensing requests file"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"

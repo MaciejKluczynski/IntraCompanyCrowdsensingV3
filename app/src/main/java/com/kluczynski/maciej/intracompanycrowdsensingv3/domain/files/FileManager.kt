@@ -26,23 +26,27 @@ class FileManager(var context: Context) {
     private var objectToResultConverter: ObjectToResultConverter = ObjectToResultConverter()
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun createLogsFile(content: List<MainActivity.ExaminationPlanString>) {
+    fun createScheduleFile(content: List<MainActivity.ExaminationPlanString>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            createFileAndQAndAbove(content,"logs.txt")
+            createFileAndQAndAbove(content, "schedule.txt")
         } else {
-            createTextFileAndWriteDataToItAndroidBelowQ(content,"logs.txt")
+            createTextFileAndWriteDataToItAndroidBelowQ(content, "schedule.txt")
         }
 
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun<T> createFileAndQAndAbove(content: T, filename:String) {
+    private fun <T> createFileAndQAndAbove(content: T, filename: String) {
         try {
             val values = ContentValues()
             values.put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
             values.put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
-            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/")
-            val uri = context.contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
+            values.put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/"
+            )
+            val uri =
+                context.contentResolver.insert(MediaStore.Files.getContentUri("external"), values)
             val outputStream: OutputStream? = context.contentResolver.openOutputStream(uri!!)
             outputStream!!.write(objectToResultConverter.convertObjectToJson(content).toByteArray())
             outputStream.close()
@@ -81,7 +85,11 @@ class FileManager(var context: Context) {
                 text = String(bytes)
             }
         } catch (e: IOException) {
-            Toast.makeText(context, "CANNOT READ FILE - IT IS OPENED BY ANOTHER PROCESS", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "CANNOT READ FILE - IT IS OPENED BY ANOTHER PROCESS",
+                Toast.LENGTH_LONG
+            ).show()
             text = null
         }
         return text
@@ -97,7 +105,11 @@ class FileManager(var context: Context) {
             context.contentResolver.query(contentUri, null, selection, selectionArgs, null)!!
         var uri: Uri? = null
         if (cursor.count == 0) {
-            Toast.makeText(context, "No file found in \"" + Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/\"", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "No file found in \"" + Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/\"",
+                Toast.LENGTH_LONG
+            ).show()
         } else {
             while (cursor.moveToNext()) {
                 val fileName: String =
@@ -109,14 +121,15 @@ class FileManager(var context: Context) {
                     break
                 }
             }
-            if (uri == null)
-                Toast.makeText(context, "File found successfully but cannot be opened", Toast.LENGTH_LONG).show()
         }
         return uri
     }
 
     fun getFileUriAndroidBelowQ(): Uri {
-        return File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", "results.txt").toUri()
+        return File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                .toString() + "/Sensing requests data/", "results.txt"
+        ).toUri()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -152,29 +165,39 @@ class FileManager(var context: Context) {
 
     @SuppressLint("ShowToast")
     fun saveResultToFile(
-        content: String,
+        questionContent: String,
         result: String,
-        ask: String,
-        anwser: String,
-        comment: String
+        sensingRequestAskTime: String,
+        timeDisplayQuestionOnScreen:String,
+        answerTime: String,
+        comment: String,
+        sensingRequestId:String
     ) {
-        val result = ResultModel(content, result, ask, anwser, comment)
+        val result = ResultModel(
+            questionContent = questionContent,
+            result = result,
+            askTimeSensingRequest = sensingRequestAskTime,
+            answerTime = answerTime,
+            comment = comment,
+            timeDisplayQuestionOnScreen = timeDisplayQuestionOnScreen,
+            sensingRequestId = sensingRequestId
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (findFileAndGetUriAndQAndAbove() != null) {
                 overwriteFileAndQAndAbove(result)
             } else {
-                createFileAndQAndAbove(result,"results.txt")
+                createFileAndQAndAbove(result, "results.txt")
             }
         } else {
             if (ifFileExists()) {
                 overwriteFile(result)
             } else {
-                createTextFileAndWriteDataToItAndroidBelowQ(result,"results.txt")
+                createTextFileAndWriteDataToItAndroidBelowQ(result, "results.txt")
             }
         }
     }
 
-    private fun<T> createTextFileAndWriteDataToItAndroidBelowQ(result: T,filename: String) {
+    private fun <T> createTextFileAndWriteDataToItAndroidBelowQ(result: T, filename: String) {
         try {
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
                 .toString() + "/Sensing requests data/"
@@ -182,13 +205,17 @@ class FileManager(var context: Context) {
             if (!file1.exists()) {
                 file1.mkdirs()
             }
-            val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", filename)
+            val file = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                    .toString() + "/Sensing requests data/", filename
+            )
             val fos = FileOutputStream(file)
             fos.write(objectToResultConverter.convertObjectToJson(result).toByteArray())
             fos.close()
             Log.d("FILE", "ANDROID BELOW Q FILE CREATED SUCCESFULLY IN $dir")
         } catch (e: IOException) {
-            Toast.makeText(context, "FAILED TO CREADTE FILE ANDROID Q AND ABOVE", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "FAILED TO CREADTE FILE ANDROID Q AND ABOVE", Toast.LENGTH_LONG)
+                .show()
         }
     }
 
@@ -206,7 +233,10 @@ class FileManager(var context: Context) {
     }
 
     private fun ifFileExists(): Boolean {
-        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/Sensing requests data/", "results.txt")
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+                .toString() + "/Sensing requests data/", "results.txt"
+        )
         return file.exists()
     }
 }

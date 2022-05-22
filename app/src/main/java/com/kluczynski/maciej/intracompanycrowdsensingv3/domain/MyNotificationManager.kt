@@ -17,32 +17,37 @@ import java.util.*
 class MyNotificationManager(val context: Context) {
 
     @SuppressLint("WrongConstant")
-    fun createNotificationChannel(){
+    fun createNotificationChannel() {
         //android O - Oreo Android 8.0
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = MainActivity.CHANNEL_NAME
             val description = MainActivity.CHANNEL_DESCRIPTION
             val importance = NotificationManager.IMPORTANCE_MAX
             val notificationChannel = NotificationChannel(MainActivity.CHANNEL_ID, name, importance)
             notificationChannel.description = description
-            val notificationManager = context.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                context.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 
     //cancelling notifications
-    fun cancellNotification(){
+    fun cancellNotification() {
         //cancell notification
-        val notificationManager = context.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(1)
     }
 
-    private fun createActivityPendingIntent(context: Context,
-                                            content:String,
-                                            hint:String,
-                                            type:String,
-                                            why_ask:String,
-                                            questionTime:Date) : PendingIntent?{
+    private fun createActivityPendingIntent(
+        context: Context,
+        content: String,
+        hint: String,
+        type: String,
+        why_ask: String,
+        questionTime: Date,
+        sensingRequestId: String
+    ): PendingIntent? {
         //start result activity on click on notification
         val mainIntent = Intent(context, ResultBroadcast::class.java)
         mainIntent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -51,15 +56,19 @@ class MyNotificationManager(val context: Context) {
         mainIntent.putExtra("QuestionType", type)
         mainIntent.putExtra("WhyAsk", why_ask)
         mainIntent.putExtra("QuestionTime", DateManager().convertDateToString(questionTime))
+        mainIntent.putExtra("Id", sensingRequestId)
         return PendingIntent.getBroadcast(context, 0, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
-    private fun createDismissPendingIntent(context: Context,
-                                           content:String,
-                                           hint:String,
-                                           type:String,
-                                           why_ask:String,
-                                           questionTime:Date): PendingIntent? {
+    private fun createDismissPendingIntent(
+        context: Context,
+        content: String,
+        hint: String,
+        type: String,
+        why_ask: String,
+        questionTime: Date,
+        sensingRequestId: String
+    ): PendingIntent? {
         //start dismiss Broadcast as a result of dismissing notification
         val deleteIntent = Intent(context, DismissBroadcast::class.java)
         //deleteIntent.action = "notification_cancelled"
@@ -68,22 +77,46 @@ class MyNotificationManager(val context: Context) {
         deleteIntent.putExtra("QuestionType", type)
         deleteIntent.putExtra("WhyAsk", why_ask)
         deleteIntent.putExtra("QuestionTime", DateManager().convertDateToString(questionTime))
-        return PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        deleteIntent.putExtra("Id", sensingRequestId)
+        return PendingIntent.getBroadcast(
+            context,
+            0,
+            deleteIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
     //https://stackoverflow.com/questions/5399229/how-to-remove-the-notification-after-the-particular-time-in-android
     //timeout not working in api<26
     //https://developer.android.com/reference/androidx/core/app/NotificationCompat.Builder#setTimeoutAfter(long)
-    fun createCloseEndedNotification(context: Context,intent: Intent?){
+    fun createCloseEndedNotification(context: Context, intent: Intent?) {
         val content = intent!!.getStringExtra("Content")
         val hint = intent!!.getStringExtra("Hint")
         val type = intent!!.getStringExtra("QuestionType")
         val why_ask = intent!!.getStringExtra("WhyAsk")
         val questionTime = intent!!.getStringExtra("QuestionTime")
+        val sensingRequestId = intent!!.getStringExtra("Id") ?: "-1"
         val dateManager = DateManager()
         val date_internal = dateManager.getSimpleDateFormat().parse(questionTime)
-        val activityPendingIntent = createActivityPendingIntent(context,content!!,hint!!,type!!,why_ask!!,date_internal)
-        val dismissPendingIntent = createDismissPendingIntent(context, content, hint, type, why_ask,date_internal)
+        val activityPendingIntent = createActivityPendingIntent(
+            context = context,
+            content = content!!,
+            hint = hint!!,
+            type = type!!,
+            why_ask = why_ask!!,
+            questionTime = date_internal,
+            sensingRequestId = sensingRequestId,
+        )
+        val dismissPendingIntent =
+            createDismissPendingIntent(
+                context = context,
+                content = content!!,
+                hint = hint!!,
+                type = type!!,
+                why_ask = why_ask!!,
+                questionTime = date_internal,
+                sensingRequestId = sensingRequestId
+            )
         //create notification
         val builder = NotificationCompat.Builder(context, "ICC")
         builder.setSmallIcon(R.mipmap.ic_launcher)
@@ -98,6 +131,6 @@ class MyNotificationManager(val context: Context) {
         builder.setTimeoutAfter(ReminderBroadcast.NOTIFICATION_TIMEOUT_MS)
         builder.setDeleteIntent(dismissPendingIntent)
         val notificationManagerCompat = NotificationManagerCompat.from(context)
-        notificationManagerCompat.notify(1,builder.build())
+        notificationManagerCompat.notify(1, builder.build())
     }
 }

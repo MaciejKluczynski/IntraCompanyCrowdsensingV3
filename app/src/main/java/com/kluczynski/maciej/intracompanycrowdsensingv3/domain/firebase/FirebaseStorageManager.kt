@@ -19,7 +19,6 @@ class FirebaseStorageManager(var context: Context) {
         val url:Uri? = if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q){
             fileManager.findFileAndGetUriAndQAndAbove()
         } else{
-            //TODO test
             fileManager.getFileUriAndroidBelowQ()
         }
         return url?.let { filesRef.putFile(it)  }

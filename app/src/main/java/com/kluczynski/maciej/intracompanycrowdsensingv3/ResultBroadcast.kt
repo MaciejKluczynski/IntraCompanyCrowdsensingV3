@@ -11,6 +11,7 @@ class ResultBroadcast:BroadcastReceiver() {
         val questionTime = intent.getStringExtra("QuestionTime")
         val whyAsk = intent.getStringExtra("WhyAsk")
         val hint = intent.getStringExtra("Hint")
+        val sensingRequestId = intent.getStringExtra("Id")
 
         val activityIntent = Intent(context,ResultActivity::class.java)
         activityIntent.putExtra("Content",content)
@@ -18,6 +19,7 @@ class ResultBroadcast:BroadcastReceiver() {
         activityIntent.putExtra("QuestionTime",questionTime)
         activityIntent.putExtra("WhyAsk",whyAsk)
         activityIntent.putExtra("Hint",hint)
+        activityIntent.putExtra("Id",sensingRequestId)
         activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context!!.startActivity(activityIntent)
     }

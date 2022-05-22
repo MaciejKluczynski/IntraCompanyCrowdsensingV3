@@ -16,24 +16,26 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
 
     //scheduling notifications at specific time
     private fun createAlert(
-        date: Date,
+        sensingRequestAskTime: Date,
         requestCode: Int,
         questionContent: String,
         hint: String,
         questionType: String,
-        why_ask: String
+        whyAsk: String,
+        sensingRequestId:String
     ) {
         val intent = Intent(context, ReminderBroadcast::class.java)
         intent.putExtra("Question", "Have you got some time to answer a question")
         intent.putExtra("Content", questionContent)
         intent.putExtra("Hint", hint)
-        intent.putExtra("WhyAsk", why_ask)
+        intent.putExtra("WhyAsk", whyAsk)
         intent.putExtra("QuestionType", questionType)
-        intent.putExtra("QuestionTime", DateManager().convertDateToString(date))
+        intent.putExtra("QuestionTime", DateManager().convertDateToString(sensingRequestAskTime))
+        intent.putExtra("Id", sensingRequestId)
 
         val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, date.time, pendingIntent)
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, sensingRequestAskTime.time, pendingIntent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -52,12 +54,13 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
                         "${dayOfExamination.singleDateOfExaminationPlan.dayOfMonth}-${monthName}-${dayOfExamination.singleDateOfExaminationPlan.year} ${sensingRequest.time}:00"
                     )
                 createAlert(
-                    date,
-                    i,
-                    sensingRequest.content,
-                    sensingRequest.hint,
-                    sensingRequest.questionType,
-                    sensingRequest.why_ask
+                    sensingRequestAskTime = date,
+                    requestCode = i,
+                    questionContent = sensingRequest.content,
+                    hint = sensingRequest.hint,
+                    questionType =  sensingRequest.questionType,
+                    whyAsk = sensingRequest.why_ask,
+                    sensingRequestId = sensingRequest.sensing_request_id
                 )
                 i++
             }

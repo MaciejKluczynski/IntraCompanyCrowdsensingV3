@@ -11,10 +11,12 @@ class FirebaseDatabaseManager(var name:String) {
 
     fun insertSensingRequestResultIntoDatabase(result: ResultModel): Task<DocumentReference> {
         val sensingRequest = hashMapOf(
-            "content" to result.content,
-            "ask_time" to result.ask_time,
+            "sensingRequestId" to result.sensingRequestId,
+            "content" to result.questionContent,
+            "askTimeSensingRequest" to result.askTimeSensingRequest,
+            "timeDisplayQuestionOnScreen" to result.timeDisplayQuestionOnScreen,
             "result" to result.result,
-            "anwser_time" to result.answer_time,
+            "anwserTime" to result.answerTime,
             "comment" to result.comment
         )
         return db.collection(name)

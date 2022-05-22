@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.checkSelfPermission
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
-import com.kluczynski.maciej.intracompanycrowdsensingv3.data.SensingRequestModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import java.time.LocalDate
 import java.time.LocalTime
@@ -32,14 +31,17 @@ class DismissBroadcast : BroadcastReceiver() {
                 val questionTime = intent!!.getStringExtra("QuestionTime")
                 val why_ask = intent!!.getStringExtra("WhyAsk")
                 val hint = intent!!.getStringExtra("Hint")
+                val sensingRequestId = intent!!.getStringExtra("Id") ?: "-1"
                 content?.let { content ->
                     ResultSaver(context).saveResult(
                         ResultModel(
-                            content = content,
+                            questionContent = content,
                             result = "DISMISSED",
-                            ask_time = questionTime.toString(),
-                            answer_time = "${LocalDate.now()} ${LocalTime.now()}",
-                            comment = ""
+                            askTimeSensingRequest = questionTime.toString(),
+                            timeDisplayQuestionOnScreen = questionTime.toString(),
+                            answerTime = "${LocalDate.now()} ${LocalTime.now()}",
+                            comment = "",
+                            sensingRequestId = sensingRequestId
                         )
                     )
                 }
