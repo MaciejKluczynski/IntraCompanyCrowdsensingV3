@@ -30,6 +30,8 @@ class ResultSaver(var context: Context) {
     private fun authenticateUserAndWriteDataToCloud(result: ResultModel, context: Context) =
         firebaseLoginManager.provideUserAndPerformCloudOperations(result, context)
 
+    fun authenticateUserAndUploadSchedule() =
+        firebaseLoginManager.provideUserAndUploadScheduleFile(context)
 
     private fun saveDataToTextFile(result: ResultModel) {
         fileManager.saveResultToFile(

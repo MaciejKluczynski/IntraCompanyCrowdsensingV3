@@ -132,7 +132,7 @@ class ResultActivity : AppCompatActivity() {
         val editTextNumber = findViewById<EditText>(R.id.editTextNumber)
         editTextNumber.visibility = View.VISIBLE
         val saveBtn = findViewById<Button>(R.id.saveBtn)
-        saveBtn.visibility = View.VISIBLE
+        saveBtn.visibility = View.GONE
         val yesBtn = findViewById<Button>(R.id.yes_btn)
         yesBtn.visibility = View.GONE
         val noBtn = findViewById<Button>(R.id.no_btn)

@@ -14,13 +14,24 @@ class FirebaseStorageManager(var context: Context) {
     private val fileManager = FileManager(context)
     var storageRef = FirebaseStorage.getInstance().reference
 
-    fun backupTxtFileToCloud(nick:String): UploadTask? {
+    fun backupResultsFileToCloud(nick:String): UploadTask? {
         val filesRef = storageRef.child("/$nick")
         val url:Uri? = if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q){
-            fileManager.findFileAndGetUriAndQAndAbove()
+            fileManager.findFileAndGetUriAndQAndAbove("results.txt")
         } else{
-            fileManager.getFileUriAndroidBelowQ()
+            fileManager.getFileUriAndroidBelowQ("results.txt")
         }
         return url?.let { filesRef.putFile(it)  }
     }
+
+    fun backupScheduleFileToCloud(nick:String): UploadTask? {
+        val filesRef = storageRef.child("/${nick}_schedule")
+        val url:Uri? = if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q){
+            fileManager.findFileAndGetUriAndQAndAbove("schedule.txt")
+        } else{
+            fileManager.getFileUriAndroidBelowQ("schedule.txt")
+        }
+        return url?.let { filesRef.putFile(it)  }
+    }
+
 }

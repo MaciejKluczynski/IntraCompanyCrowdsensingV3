@@ -26,12 +26,24 @@ class FirebaseLoginManager(var context: Context) {
             Toast.makeText(context,"USER ALREADY LOGGED IN ${currentUser.email}",Toast.LENGTH_LONG).show()
             performCloudOperations(result)
         }else{
-            performLogin(result)
+            performLoginAndUploadResults(result)
+        }
+    }
+
+    fun provideUserAndUploadScheduleFile(context: Context) {
+        auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            Log.d("USER ALREADY LOGGED IN", currentUser.email.toString())
+            Toast.makeText(context,"USER ALREADY LOGGED IN ${currentUser.email}",Toast.LENGTH_LONG).show()
+            uploadScheduleFileToCloud()
+        }else{
+            performLoginAndUploadSchedule()
         }
     }
 
     private fun performCloudOperations(result: ResultModel){
-        uploadFileToCloud()
+        uploadResultsFileToCloud()
         saveResultToFirebase(result)
     }
 
@@ -52,18 +64,30 @@ class FirebaseLoginManager(var context: Context) {
 
     }
 
-    private fun uploadFileToCloud(){
-        firebaseStorageManager.backupTxtFileToCloud(
+    private fun uploadResultsFileToCloud(){
+        firebaseStorageManager.backupResultsFileToCloud(
                 sensingRequestsResultFilePathProvider.getUserNameFromSharedPrefs())
                 ?.addOnSuccessListener {
-            Log.d("TAG", "file uploaded successfully")
-            Toast.makeText(context,"File uploaded to cloud successfully",Toast.LENGTH_LONG).show()
+            Log.d("TAG", "Results file uploaded successfully")
+            Toast.makeText(context,"Results file uploaded to cloud successfully",Toast.LENGTH_LONG).show()
                     killActivityIfExists()
         }
                 ?.addOnFailureListener {
-                    Toast.makeText(context,"File NOT uploaded to cloud - contact administrator",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,"Results file NOT uploaded to cloud - contact administrator",Toast.LENGTH_LONG).show()
                     killActivityIfExists()
                 }
+    }
+
+    private fun uploadScheduleFileToCloud(){
+        firebaseStorageManager.backupScheduleFileToCloud(
+            sensingRequestsResultFilePathProvider.getUserNameFromSharedPrefs())
+            ?.addOnSuccessListener {
+                Log.d("TAG", "file uploaded successfully")
+                Toast.makeText(context,"Schedule file uploaded to cloud successfully",Toast.LENGTH_LONG).show()
+            }
+            ?.addOnFailureListener {
+                Toast.makeText(context,"Schedule file NOT uploaded to cloud - contact administrator",Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun killActivityIfExists(){
@@ -72,7 +96,7 @@ class FirebaseLoginManager(var context: Context) {
             (context as AppCompatActivity).finishAndRemoveTask()
     }
 
-    private fun performLogin(result: ResultModel) {
+    private fun performLoginAndUploadResults(result: ResultModel) {
         var user:FirebaseUser?
         auth.signInWithEmailAndPassword("icc.examination@gmail.com", "Icc2022!")
                 .addOnSuccessListener {
@@ -86,5 +110,21 @@ class FirebaseLoginManager(var context: Context) {
                 .addOnFailureListener {
                     Log.d("FAILED TO LOG IN","FAILED TO LOG IN")
                 }
+    }
+
+    private fun performLoginAndUploadSchedule() {
+        var user:FirebaseUser?
+        auth.signInWithEmailAndPassword("icc.examination@gmail.com", "Icc2022!")
+            .addOnSuccessListener {
+                user = auth.currentUser
+                user?.let {
+                    Log.d("LOGGED IN SUCCESSFULLY",it.email.toString())
+                    Toast.makeText(context, "SUCCESFULLY LOGGED IN ${it.email}",Toast.LENGTH_LONG).show()
+                    uploadScheduleFileToCloud()
+                }
+            }
+            .addOnFailureListener {
+                Log.d("FAILED TO LOG IN","FAILED TO LOG IN")
+            }
     }
 }

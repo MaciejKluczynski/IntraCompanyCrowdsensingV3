@@ -59,7 +59,7 @@ class FileManager(var context: Context) {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun findAndReadFileAndQAndAbove(): String? {
         var content: String? = ""
-        val uri = findFileAndGetUriAndQAndAbove()
+        val uri = findFileAndGetUriAndQAndAbove("results.txt")
         if (uri == null) {
             Toast.makeText(context, "\"results.txt\" not found", Toast.LENGTH_SHORT).show();
         } else {
@@ -97,7 +97,7 @@ class FileManager(var context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("Range", "Recycle")
-    fun findFileAndGetUriAndQAndAbove(): Uri? {
+    fun findFileAndGetUriAndQAndAbove(filename: String): Uri? {
         val contentUri: Uri = MediaStore.Files.getContentUri("external")
         val selection: String = MediaStore.MediaColumns.RELATIVE_PATH + "=?"
         val selectionArgs = arrayOf(Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/")
@@ -114,7 +114,7 @@ class FileManager(var context: Context) {
             while (cursor.moveToNext()) {
                 val fileName: String =
                     cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
-                if (fileName == "results.txt") {
+                if (fileName == filename) {
                     val id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID))
                     uri = ContentUris.withAppendedId(contentUri, id)
                     Log.d("FILE", "ANDROID Q AND ABOVE URL FOUND SUCCESSFULLY $uri")
@@ -125,17 +125,17 @@ class FileManager(var context: Context) {
         return uri
     }
 
-    fun getFileUriAndroidBelowQ(): Uri {
+    fun getFileUriAndroidBelowQ(filename: String): Uri {
         return File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                .toString() + "/Sensing requests data/", "results.txt"
+                .toString() + "/Sensing requests data/", filename
         ).toUri()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun overwriteFileAndQAndAbove(content: ResultModel) {
         val fileContent = findAndReadFileAndQAndAbove()
-        val uri = findFileAndGetUriAndQAndAbove()
+        val uri = findFileAndGetUriAndQAndAbove("results.txt")
         if (uri == null) {
             Toast.makeText(context, "\"result.txt\" not found", Toast.LENGTH_SHORT).show();
         } else {
@@ -183,7 +183,7 @@ class FileManager(var context: Context) {
             sensingRequestId = sensingRequestId
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (findFileAndGetUriAndQAndAbove() != null) {
+            if (findFileAndGetUriAndQAndAbove("results.txt") != null) {
                 overwriteFileAndQAndAbove(result)
             } else {
                 createFileAndQAndAbove(result, "results.txt")

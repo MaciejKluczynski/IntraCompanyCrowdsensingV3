@@ -147,6 +147,7 @@ class MainActivity : AppCompatActivity() {
                     val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(userPreferences, sensingRequests)
                     val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
                     FileManager(this).createScheduleFile(examinationPlanString)
+                    ResultSaver(this).authenticateUserAndUploadSchedule()
                     alertManager.scheduleAlerts(examinationPlan)
                 } else {
                     Toast.makeText(this, "User preferences file is empty", Toast.LENGTH_LONG).show()
