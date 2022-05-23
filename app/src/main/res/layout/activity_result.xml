@@ -10,6 +10,7 @@
         android:id="@+id/resultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
@@ -17,117 +18,148 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/yes_btn"
+        android:id="@+id/firstBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/my_green"
         android:text="YES"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultTextView"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
 
     <Button
-        android:id="@+id/no_btn"
+        android:id="@+id/secondBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/my_green"
         android:text="NO"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.80"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/yes_btn" />
+        app:layout_constraintTop_toTopOf="@+id/firstBtn" />
+
+    <Button
+        android:id="@+id/thirdBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/my_green"
+        android:text="Abcdef"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/firstBtn"
+        app:layout_constraintStart_toStartOf="@id/firstBtn"
+        app:layout_constraintTop_toBottomOf="@+id/firstBtn" />
+
+    <Button
+        android:id="@+id/forthBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/my_green"
+        android:text="Maybie"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/secondBtn"
+        app:layout_constraintStart_toStartOf="@id/secondBtn"
+        app:layout_constraintTop_toBottomOf="@+id/secondBtn"
+        app:layout_constraintVertical_bias="0.05" />
 
     <EditText
         android:id="@+id/editTextNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:inputType="number"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultTextView"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
 
     <Button
         android:id="@+id/saveBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="SAVE"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+
+    <Button
+        android:id="@+id/resultActivityDontKnowBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="don't know"
+        app:layout_constraintEnd_toEndOf="@+id/secondBtn"
+        app:layout_constraintStart_toStartOf="@+id/firstBtn"
+        app:layout_constraintTop_toBottomOf="@+id/thirdBtn" />
 
     <Button
         android:id="@+id/resultActivityWhyAskBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Why ask?"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saveBtn"
-        app:layout_constraintVertical_bias="0.05"/>
+        app:layout_constraintTop_toBottomOf="@+id/resultActivityDontKnowBtn" />
 
     <Button
         android:id="@+id/resultActivityGetHintBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Get hint"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskTextView"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskTextView" />
 
     <Button
         android:id="@+id/resultActivityAddCommentBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Add comment"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintTextView"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintTextView" />
 
     <TextView
         android:id="@+id/resultActivityWhyAskTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="DEFAULT REASON"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskBtn"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskBtn" />
 
     <TextView
         android:id="@+id/resultActivityGetHintTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="DEFAULT HINT"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintBtn"
-        app:layout_constraintVertical_bias="0.01" />
+        app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintBtn" />
 
     <EditText
         android:id="@+id/resultActivityAddCommentEditText"
@@ -136,21 +168,10 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resultActivityAddCommentBtn"
-        app:layout_constraintVertical_bias="0.01" />
+        android:layout_marginTop="8dp" />
 
-    <Button
-        android:id="@+id/resultActivityDontKnowBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="don't know"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/no_btn"
-        app:layout_constraintStart_toStartOf="@+id/yes_btn"
-        app:layout_constraintTop_toBottomOf="@+id/saveBtn"
-        app:layout_constraintVertical_bias="0.05"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

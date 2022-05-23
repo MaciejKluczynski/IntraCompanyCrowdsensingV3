@@ -16,8 +16,9 @@ class SharedPrefsProvider(var context: Context) {
         //todo shared prefs - update
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = preferences.edit()
-        val id = UUID.randomUUID().toString()
-        editor.putString("username", id)
+        editor.putString("username", generateUniqueUserId())
         editor.apply()
     }
+
+    private fun generateUniqueUserId() = UUID.randomUUID().toString()
 }

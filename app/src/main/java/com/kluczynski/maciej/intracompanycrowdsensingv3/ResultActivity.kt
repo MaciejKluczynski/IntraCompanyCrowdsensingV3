@@ -43,6 +43,10 @@ class ResultActivity : AppCompatActivity() {
         val questionWhyAsk = intent?.getStringExtra("WhyAsk")
         val questionTime = intent?.getStringExtra("QuestionTime")
         val sensingRequestId = intent?.getStringExtra("Id")
+        val buttonOption1 = intent?.getStringExtra("buttonOption1")
+        val buttonOption2 = intent?.getStringExtra("buttonOption2")
+        val buttonOption3 = intent?.getStringExtra("buttonOption3")
+        val buttonOption4 = intent?.getStringExtra("buttonOption4")
         val timeDisplayQuestionOnScreen = currentDateProvider.getCurrentDate()
         displayQuestion(questionContent!!)
         activateWhyAskBtn(questionWhyAsk!!)
@@ -57,12 +61,44 @@ class ResultActivity : AppCompatActivity() {
             sensingRequestId = sensingRequestId!!
         )
         if (questionType == "close_ended") {
-            createCloseEndedScreen(
-                content = questionContent,
-                sensingRequestTime = questionTimeString,
-                realAskTime = timeDisplayQuestionOnScreen,
-                sensingRequestId = sensingRequestId
-            )
+            createCloseEndedScreen()
+            if(buttonOption1!=null){
+                activateFirstBtn(
+                    content = questionContent,
+                    sensingRequestTime = questionTimeString,
+                    realAskTime = timeDisplayQuestionOnScreen,
+                    sensingRequestId = sensingRequestId,
+                    buttonText = buttonOption1
+                )
+            }
+            if(buttonOption2!=null){
+                activateSecondBtn(
+                    content = questionContent,
+                    sensingRequestTime = questionTimeString,
+                    realAskTime = timeDisplayQuestionOnScreen,
+                    sensingRequestId = sensingRequestId,
+                    buttonText = buttonOption2
+                )
+            }
+            if(buttonOption3!=null){
+                activateThirdBtn(
+                    content = questionContent,
+                    sensingRequestTime = questionTimeString,
+                    realAskTime = timeDisplayQuestionOnScreen,
+                    sensingRequestId = sensingRequestId,
+                    buttonText = buttonOption3
+                )
+            }
+            if(buttonOption4!=null){
+                activateForthBtn(
+                    content = questionContent,
+                    sensingRequestTime = questionTimeString,
+                    realAskTime = timeDisplayQuestionOnScreen,
+                    sensingRequestId = sensingRequestId,
+                    buttonText = buttonOption4
+                )
+            }
+
         } else if (questionType == "numerical") {
             createOpenQuestionScreen(
                 content = questionContent,
@@ -89,7 +125,7 @@ class ResultActivity : AppCompatActivity() {
                 timeDisplayQuestionOnScreen = timeDisplayQuestionOnScreen,
                 answerTime = currentDateProvider.getCurrentDate(),
                 sensingRequestId = sensingRequestId
-                )
+            )
         }
     }
 
@@ -97,8 +133,9 @@ class ResultActivity : AppCompatActivity() {
         val whyAskBtn = findViewById<Button>(R.id.resultActivityWhyAskBtn)
         whyAskBtn.setOnClickListener {
             val reasonTextView = findViewById<TextView>(R.id.resultActivityWhyAskTextView)
-            reasonTextView.visibility = View.VISIBLE
             reasonTextView.text = reason
+            reasonTextView.visibility =
+                if (reasonTextView.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
         }
     }
 
@@ -106,15 +143,18 @@ class ResultActivity : AppCompatActivity() {
         val whyAskBtn = findViewById<Button>(R.id.resultActivityGetHintBtn)
         whyAskBtn.setOnClickListener {
             val hintTextView = findViewById<TextView>(R.id.resultActivityGetHintTextView)
-            hintTextView.visibility = View.VISIBLE
             hintTextView.text = hint
+            hintTextView.visibility =
+                if (hintTextView.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
         }
     }
 
     private fun activateAddCommentBtn() {
         val addCommentBtn = findViewById<Button>(R.id.resultActivityAddCommentBtn)
         addCommentBtn.setOnClickListener {
-            findViewById<EditText>(R.id.resultActivityAddCommentEditText).visibility = View.VISIBLE
+            val addCommentField = findViewById<EditText>(R.id.resultActivityAddCommentEditText)
+            addCommentField.visibility =
+                if (addCommentField.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
         }
     }
 
@@ -127,16 +167,20 @@ class ResultActivity : AppCompatActivity() {
         content: String,
         sensingRequestAskTime: String,
         realAskTime: String,
-        sensingRequestId:String
+        sensingRequestId: String
     ) {
         val editTextNumber = findViewById<EditText>(R.id.editTextNumber)
         editTextNumber.visibility = View.VISIBLE
         val saveBtn = findViewById<Button>(R.id.saveBtn)
         saveBtn.visibility = View.VISIBLE
-        val yesBtn = findViewById<Button>(R.id.yes_btn)
-        yesBtn.visibility = View.GONE
-        val noBtn = findViewById<Button>(R.id.no_btn)
-        noBtn.visibility = View.GONE
+        val firstBtn = findViewById<Button>(R.id.firstBtn)
+        firstBtn.visibility = View.INVISIBLE
+        val secondBtn = findViewById<Button>(R.id.secondBtn)
+        secondBtn.visibility = View.INVISIBLE
+        val thirdBtn = findViewById<Button>(R.id.thirdBtn)
+        thirdBtn.visibility = View.INVISIBLE
+        val forthBtn = findViewById<Button>(R.id.forthBtn)
+        forthBtn.visibility = View.INVISIBLE
         saveBtn.setOnClickListener {
             saveDataToTxtFile(
                 content = content,
@@ -149,40 +193,27 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun createCloseEndedScreen(
-        content: String,
-        sensingRequestTime: String,
-        realAskTime: String,
-        sensingRequestId:String
-    ) {
+    private fun createCloseEndedScreen() {
         val saveBtn = findViewById<Button>(R.id.saveBtn)
-        saveBtn.visibility = View.GONE
-        activateYesBtn(
-            content = content,
-            sensingRequestTime = sensingRequestTime,
-            realAskTime = realAskTime,
-            sensingRequestId = sensingRequestId
-        )
-        activateNoBtn(
-            content = content,
-            sensingRequestTime = sensingRequestTime,
-            realAskTime = realAskTime,
-            sensingRequestId = sensingRequestId
-        )
+        saveBtn.visibility = View.INVISIBLE
+        val editTextField = findViewById<EditText>(R.id.editTextNumber)
+        editTextField.visibility = View.INVISIBLE
     }
 
-    private fun activateYesBtn(
+    private fun activateFirstBtn(
         content: String,
         sensingRequestTime: String,
         realAskTime: String,
-        sensingRequestId: String
+        sensingRequestId: String,
+        buttonText:String
     ) {
-        val yesBtn = findViewById<Button>(R.id.yes_btn)
-        yesBtn.visibility = View.VISIBLE
-        yesBtn.setOnClickListener {
+        val firstBtn = findViewById<Button>(R.id.firstBtn)
+        firstBtn.visibility = View.VISIBLE
+        firstBtn.text = buttonText
+        firstBtn.setOnClickListener {
             saveDataToTxtFile(
                 content = content,
-                result = "YES",
+                result = firstBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
                 timeDisplayQuestionOnScreen = realAskTime,
                 answerTime = currentDateProvider.getCurrentDate(),
@@ -191,18 +222,64 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun activateNoBtn(
+    private fun activateSecondBtn(
         content: String,
         sensingRequestTime: String,
         realAskTime: String,
-        sensingRequestId: String
+        sensingRequestId: String,
+        buttonText:String
     ) {
-        val noBtn = findViewById<Button>(R.id.no_btn)
-        noBtn.visibility = View.VISIBLE
-        noBtn.setOnClickListener {
+        val secondBtn = findViewById<Button>(R.id.secondBtn)
+        secondBtn.visibility = View.VISIBLE
+        secondBtn.text = buttonText
+        secondBtn.setOnClickListener {
             saveDataToTxtFile(
                 content = content,
-                result = "NO",
+                result = secondBtn.text.toString(),
+                sensingRequestAskTime = sensingRequestTime,
+                timeDisplayQuestionOnScreen = realAskTime,
+                answerTime = currentDateProvider.getCurrentDate(),
+                sensingRequestId = sensingRequestId
+            )
+        }
+    }
+
+    private fun activateThirdBtn(
+        content: String,
+        sensingRequestTime: String,
+        realAskTime: String,
+        sensingRequestId: String,
+        buttonText:String
+    ) {
+        val thirdBtn = findViewById<Button>(R.id.thirdBtn)
+        thirdBtn.visibility = View.VISIBLE
+        thirdBtn.text = buttonText
+        thirdBtn.setOnClickListener {
+            saveDataToTxtFile(
+                content = content,
+                result = thirdBtn.text.toString(),
+                sensingRequestAskTime = sensingRequestTime,
+                timeDisplayQuestionOnScreen = realAskTime,
+                answerTime = currentDateProvider.getCurrentDate(),
+                sensingRequestId = sensingRequestId
+            )
+        }
+    }
+
+    private fun activateForthBtn(
+        content: String,
+        sensingRequestTime: String,
+        realAskTime: String,
+        sensingRequestId: String,
+        buttonText:String
+    ) {
+        val forthBtn = findViewById<Button>(R.id.forthBtn)
+        forthBtn.visibility = View.VISIBLE
+        forthBtn.text = buttonText
+        forthBtn.setOnClickListener {
+            saveDataToTxtFile(
+                content = content,
+                result = forthBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
                 timeDisplayQuestionOnScreen = realAskTime,
                 answerTime = currentDateProvider.getCurrentDate(),

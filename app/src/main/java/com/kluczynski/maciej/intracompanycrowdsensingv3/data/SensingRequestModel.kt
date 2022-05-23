@@ -13,5 +13,6 @@ data class SensingRequestModel(
         var why_ask:String,
         var hint:String,
         var time:LocalTime?,
+        var buttonOptions:List<String>?
         )
 //time jest w formacie SimpleDateFormat("dd-M-yyyy HH:mm:ss")

@@ -123,6 +123,7 @@ class SensingRequestsAllocationAlgorithm {
             why_ask = tempSensingRequest.why_ask,
             hint = tempSensingRequest.hint,
             time = tempSensingRequest.time,
+            buttonOptions = tempSensingRequest.buttonOptions
         )
     }
 

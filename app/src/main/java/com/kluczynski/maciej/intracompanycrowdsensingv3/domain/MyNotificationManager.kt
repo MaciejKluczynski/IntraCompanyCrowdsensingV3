@@ -46,7 +46,11 @@ class MyNotificationManager(val context: Context) {
         type: String,
         why_ask: String,
         questionTime: Date,
-        sensingRequestId: String
+        sensingRequestId: String,
+        buttonOption1:String,
+        buttonOption2:String,
+        buttonOption3:String? = null,
+        buttonOption4:String? = null,
     ): PendingIntent? {
         //start result activity on click on notification
         val mainIntent = Intent(context, ResultBroadcast::class.java)
@@ -57,6 +61,10 @@ class MyNotificationManager(val context: Context) {
         mainIntent.putExtra("WhyAsk", why_ask)
         mainIntent.putExtra("QuestionTime", DateManager().convertDateToString(questionTime))
         mainIntent.putExtra("Id", sensingRequestId)
+        mainIntent.putExtra("buttonOption1",buttonOption1)
+        mainIntent.putExtra("buttonOption2",buttonOption2)
+        mainIntent.putExtra("buttonOption3",buttonOption3)
+        mainIntent.putExtra("buttonOption4",buttonOption4)
         return PendingIntent.getBroadcast(context, 0, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 
@@ -96,6 +104,10 @@ class MyNotificationManager(val context: Context) {
         val why_ask = intent!!.getStringExtra("WhyAsk")
         val questionTime = intent!!.getStringExtra("QuestionTime")
         val sensingRequestId = intent!!.getStringExtra("Id") ?: "-1"
+        val buttonOption1 = intent.getStringExtra("buttonOption1") ?: "YES"
+        val buttonOption2 = intent.getStringExtra("buttonOption2") ?: "NO"
+        val buttonOption3 = intent.getStringExtra("buttonOption3")
+        val buttonOption4 = intent.getStringExtra("buttonOption4")
         val dateManager = DateManager()
         val date_internal = dateManager.getSimpleDateFormat().parse(questionTime)
         val activityPendingIntent = createActivityPendingIntent(
@@ -106,6 +118,10 @@ class MyNotificationManager(val context: Context) {
             why_ask = why_ask!!,
             questionTime = date_internal,
             sensingRequestId = sensingRequestId,
+            buttonOption1 = buttonOption1,
+            buttonOption2 = buttonOption2,
+            buttonOption3 = buttonOption3,
+            buttonOption4 = buttonOption4,
         )
         val dismissPendingIntent =
             createDismissPendingIntent(

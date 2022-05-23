@@ -58,28 +58,23 @@ class MainActivity : AppCompatActivity() {
         loadBtn.setOnClickListener {
             //request write storage permission
             //android M - Marshmello 6.0
-            if (nick != "") {
-                sensingRequestsResultFilePathProvider.generateAndSaveUserNameInSharedPrefs()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                            PackageManager.PERMISSION_GRANTED ||
-                            checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) !=
-                            PackageManager.PERMISSION_GRANTED)
-                ) {
-                    requestPermissions(
-                        arrayOf(
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ),
-                        PERMISSION_READ_AND_WRITE_STORAGE
-                    )
-                }
-                //only when 2 permissions are provided - open file search
-                else openFileSearch(READ_DATABASE_REQUEST_CODE)
-            } else {
-                Toast.makeText(this, "You have to provide nick first", Toast.LENGTH_LONG).show()
+            sensingRequestsResultFilePathProvider.generateAndSaveUserNameInSharedPrefs()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED ||
+                        checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED)
+            ) {
+                requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ),
+                    PERMISSION_READ_AND_WRITE_STORAGE
+                )
             }
-
+            //only when 2 permissions are provided - open file search
+            else openFileSearch(READ_DATABASE_REQUEST_CODE)
         }
     }
 
@@ -127,7 +122,10 @@ class MainActivity : AppCompatActivity() {
                 val uri: Uri = data.data!!
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    sensingRequests = SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(fileContent)
+                    sensingRequests =
+                        SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
+                            fileContent
+                        )
                     activateLoadUserPreferencesBtn()
                 } else {
                     Toast.makeText(this, "Sensing requests file is empty", Toast.LENGTH_LONG).show()
@@ -141,8 +139,13 @@ class MainActivity : AppCompatActivity() {
                 val uri: Uri = data.data!!
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    userPreferences = UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
-                    val examinationPlan =  SensingRequestsAllocationAlgorithm().allocateSensingRequests(userPreferences, sensingRequests)
+                    userPreferences =
+                        UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
+                    val examinationPlan =
+                        SensingRequestsAllocationAlgorithm().allocateSensingRequests(
+                            userPreferences,
+                            sensingRequests
+                        )
                     val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
                     FileManager(this).createScheduleFile(examinationPlanString)
                     ResultSaver(this).authenticateUserAndUploadSchedule()
@@ -173,10 +176,12 @@ class MainActivity : AppCompatActivity() {
                         why_ask = j.why_ask,
                         hint = j.hint,
                         time = j.time.toString(),
+                        buttonOptions = j.buttonOptions.toString()
                     )
                 )
             }
-            val date = i.singleDateOfExaminationPlan.format(DateTimeFormatter.ofPattern(DateManager.DATE_FORMAT_PATTERN))
+            val date =
+                i.singleDateOfExaminationPlan.format(DateTimeFormatter.ofPattern(DateManager.DATE_FORMAT_PATTERN))
             tempPlan.add(ExaminationPlanString(date, tempSensingRequests))
         }
         return tempPlan
@@ -198,5 +203,6 @@ class MainActivity : AppCompatActivity() {
         val why_ask: String,
         val hint: String,
         var time: String,
+        var buttonOptions: String? = null,
     )
 }

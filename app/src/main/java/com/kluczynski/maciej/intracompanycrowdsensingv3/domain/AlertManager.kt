@@ -22,7 +22,8 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
         hint: String,
         questionType: String,
         whyAsk: String,
-        sensingRequestId:String
+        sensingRequestId:String,
+        buttonOptions:List<String>?
     ) {
         val intent = Intent(context, ReminderBroadcast::class.java)
         intent.putExtra("Question", "Have you got some time to answer a question")
@@ -32,7 +33,14 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
         intent.putExtra("QuestionType", questionType)
         intent.putExtra("QuestionTime", DateManager().convertDateToString(sensingRequestAskTime))
         intent.putExtra("Id", sensingRequestId)
-
+        //add button options to intent
+        buttonOptions?.let {
+            var optionNumber = 0
+            while(optionNumber < buttonOptions.size){
+                intent.putExtra("buttonOption${optionNumber+1}",buttonOptions[optionNumber])
+                optionNumber++
+            }
+        }
         val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, sensingRequestAskTime.time, pendingIntent)
@@ -60,7 +68,8 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
                     hint = sensingRequest.hint,
                     questionType =  sensingRequest.questionType,
                     whyAsk = sensingRequest.why_ask,
-                    sensingRequestId = sensingRequest.sensing_request_id
+                    sensingRequestId = sensingRequest.sensing_request_id,
+                    buttonOptions = sensingRequest.buttonOptions
                 )
                 i++
             }
