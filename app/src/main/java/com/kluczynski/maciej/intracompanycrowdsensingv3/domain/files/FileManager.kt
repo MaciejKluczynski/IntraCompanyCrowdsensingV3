@@ -94,9 +94,7 @@ class FileManager(var context: Context) {
             }
         } catch (e: IOException) {
             Toast.makeText(
-                context,
-                "CANNOT READ FILE - IT IS OPENED BY ANOTHER PROCESS",
-                Toast.LENGTH_LONG
+                context, "CANNOT READ FILE - IT IS OPENED BY ANOTHER PROCESS", Toast.LENGTH_LONG
             ).show()
             text = null
         }
@@ -113,11 +111,11 @@ class FileManager(var context: Context) {
             context.contentResolver.query(contentUri, null, selection, selectionArgs, null)!!
         var uri: Uri? = null
         if (cursor.count == 0) {
-            Toast.makeText(
+            /*Toast.makeText(
                 context,
                 "No file found in \"" + Environment.DIRECTORY_DOCUMENTS + "/Sensing requests data/\"",
                 Toast.LENGTH_LONG
-            ).show()
+            ).show()*/
         } else {
             while (cursor.moveToNext()) {
                 val fileName: String =
