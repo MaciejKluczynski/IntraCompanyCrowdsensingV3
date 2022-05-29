@@ -48,7 +48,7 @@ class DismissBroadcast : BroadcastReceiver() {
                             questionContent = content,
                             result = decision,
                             askTimeSensingRequest = questionTime.toString(),
-                            timeDisplayQuestionOnScreen = questionTime.toString(),
+                            timeDisplayQuestionOnScreen = "${LocalDate.now()} ${LocalTime.now()}",
                             answerTime = "${LocalDate.now()} ${LocalTime.now()}",
                             comment = "",
                             sensingRequestId = sensingRequestId
