@@ -30,6 +30,34 @@ class FirebaseLoginManager(var context: Context) {
         }
     }
 
+/*    fun provideUserAndUpdateNickToCloud(){
+        auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            Log.d("USER ALREADY LOGGED IN", currentUser.email.toString())
+            Toast.makeText(context,"USER ALREADY LOGGED IN ${currentUser.email}",Toast.LENGTH_LONG).show()
+            saveNickToFirebase()
+        }else{
+            performLoginAndUploadNick()
+        }
+    }
+
+    private fun performLoginAndUploadNick(){
+        var user:FirebaseUser?
+        auth.signInWithEmailAndPassword("icc.examination@gmail.com", "Icc2022!")
+            .addOnSuccessListener {
+                user = auth.currentUser
+                user?.let {
+                    Log.d("LOGGED IN SUCCESSFULLY",it.email.toString())
+                    Toast.makeText(context, "SUCCESFULLY LOGGED IN ${it.email}",Toast.LENGTH_LONG).show()
+                    saveNickToFirebase()
+                }
+            }
+            .addOnFailureListener {
+                Log.d("FAILED TO LOG IN","FAILED TO LOG IN")
+            }
+    }*/
+
     fun provideUserAndUploadScheduleFile(context: Context) {
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
@@ -61,8 +89,21 @@ class FirebaseLoginManager(var context: Context) {
                             Toast.LENGTH_LONG).show()
                     //killActivityIfExists()
                 }
-
     }
+
+  /*  private fun saveNickToFirebase(){
+        firebaseDatabaseManager.insertUserIdToDatabase()
+            .addOnSuccessListener { documentReference ->
+                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+                Toast.makeText(context,"DocumentSnapshot added with ID: ${documentReference.id}",Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error adding document", e)
+                Toast.makeText(context,
+                    "DOCUMENT NOT SAVED TO CLOUD - PLEASE CONTACT ADMINISTRATOR",
+                    Toast.LENGTH_LONG).show()
+            }
+    }*/
 
     private fun uploadResultsFileToCloud(){
         firebaseStorageManager.backupResultsFileToCloud(

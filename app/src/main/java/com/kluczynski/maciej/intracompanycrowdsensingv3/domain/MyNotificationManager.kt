@@ -65,7 +65,7 @@ class MyNotificationManager(val context: Context) {
         mainIntent.putExtra("buttonOption2",buttonOption2)
         mainIntent.putExtra("buttonOption3",buttonOption3)
         mainIntent.putExtra("buttonOption4",buttonOption4)
-        return PendingIntent.getBroadcast(context, 0, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        return PendingIntent.getBroadcast(context, 0, mainIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun createDismissPendingIntent(
@@ -90,7 +90,7 @@ class MyNotificationManager(val context: Context) {
             context,
             0,
             deleteIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
 

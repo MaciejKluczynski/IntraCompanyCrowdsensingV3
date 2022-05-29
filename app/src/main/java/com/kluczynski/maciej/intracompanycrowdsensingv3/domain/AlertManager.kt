@@ -41,9 +41,9 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
                 optionNumber++
             }
         }
-        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, sensingRequestAskTime.time, pendingIntent)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, sensingRequestAskTime.time, pendingIntent)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

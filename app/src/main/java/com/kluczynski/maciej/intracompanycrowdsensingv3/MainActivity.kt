@@ -59,6 +59,10 @@ class MainActivity : AppCompatActivity() {
             //request write storage permission
             //android M - Marshmello 6.0
             sensingRequestsResultFilePathProvider.generateAndSaveUserNameInSharedPrefs()
+
+            //todo sprawdz czy nick jest w bazie
+            //todo jesli nie to zapisz do bazy danych nick
+            //todo jesli tak - generuj nowy nicki znowu sprawdz
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                         PackageManager.PERMISSION_GRANTED ||
