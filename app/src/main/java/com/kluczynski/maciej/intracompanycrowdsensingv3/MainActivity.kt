@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -116,6 +117,16 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, requestCode)
     }
 
+    private fun showUserPrefsBtn(){
+        val userPrefsBtn = findViewById<Button>(R.id.activity_main_load_user_preferences_btn)
+        userPrefsBtn.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadSensingRequestsBtn(){
+        val userPrefsBtn = findViewById<Button>(R.id.activity_main_load_sensing_requests_btn)
+        userPrefsBtn.visibility = View.INVISIBLE
+    }
+
     //metoda ktora sie wykonuje po wybraniu pliku
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -130,6 +141,8 @@ class MainActivity : AppCompatActivity() {
                         SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
                             fileContent
                         )
+                    showUserPrefsBtn()
+                    hideLoadSensingRequestsBtn()
                     activateLoadUserPreferencesBtn()
                 } else {
                     Toast.makeText(this, "Sensing requests file is empty", Toast.LENGTH_LONG).show()
