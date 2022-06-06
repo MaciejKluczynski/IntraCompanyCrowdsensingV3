@@ -15,7 +15,6 @@
         android:fontFamily="sans-serif-medium"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
