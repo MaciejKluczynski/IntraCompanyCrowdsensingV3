@@ -47,6 +47,7 @@ class ResultActivity : AppCompatActivity() {
         val buttonOption2 = intent?.getStringExtra("buttonOption2")
         val buttonOption3 = intent?.getStringExtra("buttonOption3")
         val buttonOption4 = intent?.getStringExtra("buttonOption4")
+        val buttonOption5 = intent?.getStringExtra("buttonOption5")
         val timeDisplayQuestionOnScreen = currentDateProvider.getCurrentDate()
         displayQuestion(questionContent!!)
         activateWhyAskBtn(questionWhyAsk!!)
@@ -96,6 +97,15 @@ class ResultActivity : AppCompatActivity() {
                     realAskTime = timeDisplayQuestionOnScreen,
                     sensingRequestId = sensingRequestId,
                     buttonText = buttonOption4
+                )
+            }
+            if(buttonOption5!=null){
+                activateFifthBtn(
+                    content = questionContent,
+                    sensingRequestTime = questionTimeString,
+                    realAskTime = timeDisplayQuestionOnScreen,
+                    sensingRequestId = sensingRequestId,
+                    buttonText = buttonOption5
                 )
             }
 
@@ -280,6 +290,28 @@ class ResultActivity : AppCompatActivity() {
             saveDataToTxtFile(
                 content = content,
                 result = forthBtn.text.toString(),
+                sensingRequestAskTime = sensingRequestTime,
+                timeDisplayQuestionOnScreen = realAskTime,
+                answerTime = currentDateProvider.getCurrentDate(),
+                sensingRequestId = sensingRequestId
+            )
+        }
+    }
+
+    private fun activateFifthBtn(
+        content: String,
+        sensingRequestTime: String,
+        realAskTime: String,
+        sensingRequestId: String,
+        buttonText:String
+    ) {
+        val fifthBtn = findViewById<Button>(R.id.fifthBtn)
+        fifthBtn.visibility = View.VISIBLE
+        fifthBtn.text = buttonText
+        fifthBtn.setOnClickListener {
+            saveDataToTxtFile(
+                content = content,
+                result = fifthBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
                 timeDisplayQuestionOnScreen = realAskTime,
                 answerTime = currentDateProvider.getCurrentDate(),

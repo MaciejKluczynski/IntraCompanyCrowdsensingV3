@@ -51,6 +51,7 @@ class MyNotificationManager(val context: Context) {
         buttonOption2: String,
         buttonOption3: String? = null,
         buttonOption4: String? = null,
+        buttonOption5: String? = null,
     ): PendingIntent? {
         //start result activity on click on notification
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -66,6 +67,7 @@ class MyNotificationManager(val context: Context) {
             mainIntent.putExtra("buttonOption2", buttonOption2)
             mainIntent.putExtra("buttonOption3", buttonOption3)
             mainIntent.putExtra("buttonOption4", buttonOption4)
+            mainIntent.putExtra("buttonOption5", buttonOption5)
             return PendingIntent.getBroadcast(
                 context,
                 0,
@@ -86,6 +88,7 @@ class MyNotificationManager(val context: Context) {
             mainIntent.putExtra("buttonOption2", buttonOption2)
             mainIntent.putExtra("buttonOption3", buttonOption3)
             mainIntent.putExtra("buttonOption4", buttonOption4)
+            mainIntent.putExtra("buttonOption5", buttonOption5)
             return TaskStackBuilder.create(context).run {
                 // Add the intent, which inflates the back stack
                 addNextIntentWithParentStack(mainIntent)
@@ -139,6 +142,7 @@ class MyNotificationManager(val context: Context) {
             val buttonOption2 = intent.getStringExtra("buttonOption2") ?: "NO"
             val buttonOption3 = intent.getStringExtra("buttonOption3")
             val buttonOption4 = intent.getStringExtra("buttonOption4")
+            val buttonOption5 = intent.getStringExtra("buttonOption5")
             val dateManager = DateManager()
             val date_internal = dateManager.getSimpleDateFormat().parse(questionTime)
             val activityPendingIntent = createActivityPendingIntent(
@@ -153,6 +157,7 @@ class MyNotificationManager(val context: Context) {
                 buttonOption2 = buttonOption2,
                 buttonOption3 = buttonOption3,
                 buttonOption4 = buttonOption4,
+                buttonOption5 = buttonOption5,
             )
             val dismissPendingIntent =
                 createDismissPendingIntent(

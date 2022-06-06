@@ -149,6 +149,7 @@ class FirebaseLoginManager(var context: Context) {
                     }
                 }
                 .addOnFailureListener {
+                    Toast.makeText(context, "FAILED TO LOG IN",Toast.LENGTH_LONG).show()
                     Log.d("FAILED TO LOG IN","FAILED TO LOG IN")
                 }
     }

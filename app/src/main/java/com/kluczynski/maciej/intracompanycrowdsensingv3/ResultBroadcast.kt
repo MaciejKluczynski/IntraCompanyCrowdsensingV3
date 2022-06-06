@@ -16,6 +16,7 @@ class ResultBroadcast:BroadcastReceiver() {
         val buttonOption2 = intent.getStringExtra("buttonOption2")
         val buttonOption3 = intent.getStringExtra("buttonOption3")
         val buttonOption4 = intent.getStringExtra("buttonOption4")
+        val buttonOption5 = intent.getStringExtra("buttonOption5")
 
         val activityIntent = Intent(context,ResultActivity::class.java)
         activityIntent.putExtra("Content",content)
@@ -28,6 +29,7 @@ class ResultBroadcast:BroadcastReceiver() {
         activityIntent.putExtra("buttonOption2",buttonOption2)
         activityIntent.putExtra("buttonOption3",buttonOption3)
         activityIntent.putExtra("buttonOption4",buttonOption4)
+        activityIntent.putExtra("buttonOption5",buttonOption5)
         activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context!!.startActivity(activityIntent)
     }
