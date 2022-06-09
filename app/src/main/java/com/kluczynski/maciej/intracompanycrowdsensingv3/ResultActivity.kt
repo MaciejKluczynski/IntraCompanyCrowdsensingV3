@@ -11,8 +11,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDialog
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
+import androidx.appcompat.app.AlertDialog
 
 
 class ResultActivity : AppCompatActivity() {
@@ -142,21 +144,24 @@ class ResultActivity : AppCompatActivity() {
     private fun activateWhyAskBtn(reason: String) {
         val whyAskBtn = findViewById<Button>(R.id.resultActivityWhyAskBtn)
         whyAskBtn.setOnClickListener {
-            val reasonTextView = findViewById<TextView>(R.id.resultActivityWhyAskTextView)
-            reasonTextView.text = reason
-            reasonTextView.visibility =
-                if (reasonTextView.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+            createAlertDialog("Why ask", reason)
         }
     }
 
     private fun activateHintBtn(hint: String) {
         val whyAskBtn = findViewById<Button>(R.id.resultActivityGetHintBtn)
         whyAskBtn.setOnClickListener {
-            val hintTextView = findViewById<TextView>(R.id.resultActivityGetHintTextView)
-            hintTextView.text = hint
-            hintTextView.visibility =
-                if (hintTextView.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+            createAlertDialog("Hint",hint)
         }
+    }
+
+    private fun createAlertDialog(title:String, message:String){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK", null)
+        val appCompatDialog: AppCompatDialog = builder.create()
+        appCompatDialog.show()
     }
 
     private fun activateAddCommentBtn() {
@@ -183,14 +188,7 @@ class ResultActivity : AppCompatActivity() {
         editTextNumber.visibility = View.VISIBLE
         val saveBtn = findViewById<Button>(R.id.saveBtn)
         saveBtn.visibility = View.VISIBLE
-        val firstBtn = findViewById<Button>(R.id.firstBtn)
-        firstBtn.visibility = View.INVISIBLE
-        val secondBtn = findViewById<Button>(R.id.secondBtn)
-        secondBtn.visibility = View.INVISIBLE
-        val thirdBtn = findViewById<Button>(R.id.thirdBtn)
-        thirdBtn.visibility = View.INVISIBLE
-        val forthBtn = findViewById<Button>(R.id.forthBtn)
-        forthBtn.visibility = View.INVISIBLE
+        deactivateCloseEndedButtons()
         saveBtn.setOnClickListener {
             saveDataToTxtFile(
                 content = content,
@@ -201,6 +199,19 @@ class ResultActivity : AppCompatActivity() {
                 sensingRequestId = sensingRequestId
             )
         }
+    }
+
+    private fun deactivateCloseEndedButtons(){
+        val firstBtn = findViewById<Button>(R.id.firstBtn)
+        firstBtn.visibility = View.INVISIBLE
+        val secondBtn = findViewById<Button>(R.id.secondBtn)
+        secondBtn.visibility = View.INVISIBLE
+        val thirdBtn = findViewById<Button>(R.id.thirdBtn)
+        thirdBtn.visibility = View.INVISIBLE
+        val forthBtn = findViewById<Button>(R.id.forthBtn)
+        forthBtn.visibility = View.INVISIBLE
+        val fifthBtn = findViewById<Button>(R.id.fifthBtn)
+        fifthBtn.visibility = View.INVISIBLE
     }
 
     private fun createCloseEndedScreen() {
@@ -215,7 +226,7 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestTime: String,
         realAskTime: String,
         sensingRequestId: String,
-        buttonText:String
+        buttonText: String
     ) {
         val firstBtn = findViewById<Button>(R.id.firstBtn)
         firstBtn.visibility = View.VISIBLE
@@ -237,7 +248,7 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestTime: String,
         realAskTime: String,
         sensingRequestId: String,
-        buttonText:String
+        buttonText: String
     ) {
         val secondBtn = findViewById<Button>(R.id.secondBtn)
         secondBtn.visibility = View.VISIBLE
@@ -259,7 +270,7 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestTime: String,
         realAskTime: String,
         sensingRequestId: String,
-        buttonText:String
+        buttonText: String
     ) {
         val thirdBtn = findViewById<Button>(R.id.thirdBtn)
         thirdBtn.visibility = View.VISIBLE
@@ -281,7 +292,7 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestTime: String,
         realAskTime: String,
         sensingRequestId: String,
-        buttonText:String
+        buttonText: String
     ) {
         val forthBtn = findViewById<Button>(R.id.forthBtn)
         forthBtn.visibility = View.VISIBLE
@@ -303,7 +314,7 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestTime: String,
         realAskTime: String,
         sensingRequestId: String,
-        buttonText:String
+        buttonText: String
     ) {
         val fifthBtn = findViewById<Button>(R.id.fifthBtn)
         fifthBtn.visibility = View.VISIBLE

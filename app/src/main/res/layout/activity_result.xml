@@ -13,8 +13,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:fontFamily="sans-serif-medium"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -144,32 +144,6 @@
         android:width="150dp"
         app:layout_constraintStart_toStartOf="@+id/resultActivityGetHintBtn"
         app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintBtn" />
-
-    <TextView
-        android:id="@+id/resultActivityWhyAskTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:text="DEFAULT REASON"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/resultActivityWhyAskBtn"
-        app:layout_constraintStart_toEndOf="@+id/resultActivityWhyAskBtn"
-        app:layout_constraintTop_toTopOf="@+id/resultActivityWhyAskBtn" />
-
-    <TextView
-        android:id="@+id/resultActivityGetHintTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:text="DEFAULT HINT"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/resultActivityGetHintBtn"
-        app:layout_constraintStart_toEndOf="@+id/resultActivityGetHintBtn"
-        app:layout_constraintTop_toTopOf="@+id/resultActivityGetHintBtn" />
 
     <EditText
         android:id="@+id/resultActivityAddCommentEditText"
