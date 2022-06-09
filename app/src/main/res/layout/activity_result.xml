@@ -29,6 +29,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/my_green"
         android:text="YES"
+        android:maxWidth="300dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
@@ -41,6 +42,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/my_green"
         android:text="NO"
+        android:maxWidth="300dp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/firstBtn" />
 
@@ -51,6 +53,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/my_green"
         android:text="Abcdef"
+        android:maxWidth="300dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@id/firstBtn"
         app:layout_constraintHorizontal_bias="0.0"
@@ -64,6 +67,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/my_green"
         android:text="Maybie"
+        android:maxWidth="300dp"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/firstBtn"
         app:layout_constraintTop_toBottomOf="@+id/thirdBtn" />
@@ -73,9 +77,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:marginEnd="16dp"
+        android:paddingEnd="16dp"
         android:background="@color/my_green"
-        android:text="Maybie in my mind"
+        android:text="Maybie in my mind i will go to check if everything is ok in my school and other places like studies and work"
         android:visibility="visible"
+        android:maxWidth="300dp"
         app:layout_constraintStart_toStartOf="@id/firstBtn"
         app:layout_constraintTop_toBottomOf="@+id/forthBtn" />
 
