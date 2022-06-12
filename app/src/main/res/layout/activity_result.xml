@@ -1,168 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context=".ResultActivity">
 
-    <TextView
-        android:id="@+id/resultTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayoutResultTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="sans-serif-medium"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/firstBtn"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/resultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayoutFirstBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/my_green"
-        android:text="YES"
-        android:maxWidth="300dp"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
+        android:layout_below="@+id/linearLayoutResultTextView"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/secondBtn"
-        app:layout_constraintStart_toStartOf="@+id/firstBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/firstBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:maxWidth="300dp"
+            android:text="YES"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutSecondBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/my_green"
-        android:text="NO"
-        android:maxWidth="300dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/firstBtn" />
+        android:layout_below="@+id/linearLayoutFirstBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/thirdBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/secondBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:maxWidth="300dp"
+            android:layout_marginStart="16dp"
+            android:text="NO"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutThirdBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/my_green"
-        android:text="Abcdef"
-        android:maxWidth="300dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@id/firstBtn"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/firstBtn"
-        app:layout_constraintTop_toBottomOf="@+id/secondBtn" />
+        android:layout_below="@+id/linearLayoutSecondBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/forthBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/thirdBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:maxWidth="300dp"
+            android:layout_marginStart="16dp"
+            android:text="Abcdef"
+            android:visibility="visible"
+            app:layout_constraintHorizontal_bias="0.0" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutForthBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/my_green"
-        android:text="Maybie"
-        android:maxWidth="300dp"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="@id/firstBtn"
-        app:layout_constraintTop_toBottomOf="@+id/thirdBtn" />
+        android:layout_below="@+id/linearLayoutThirdBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/fifthBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/forthBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:maxWidth="300dp"
+            android:text="Maybie"
+            android:layout_marginStart="16dp"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutFifthBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:marginEnd="16dp"
-        android:paddingEnd="16dp"
-        android:background="@color/my_green"
-        android:text="Maybie in my mind i will go to check if everything is ok in my school and other places like studies and work"
-        android:visibility="visible"
-        android:maxWidth="300dp"
-        app:layout_constraintStart_toStartOf="@id/firstBtn"
-        app:layout_constraintTop_toBottomOf="@+id/forthBtn" />
+        android:layout_below="@+id/linearLayoutForthBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/resultActivityDontKnowBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/fifthBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:layout_marginEnd="16dp"
+            android:maxWidth="300dp"
+            android:layout_marginStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="Maybie in my mind i will go to check if everything is ok in my school and other places like studies and work"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutDontKnowBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="don't know"
-        android:background="@color/my_green"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/firstBtn"
-        app:layout_constraintTop_toBottomOf="@+id/fifthBtn"
-        />
+        android:layout_below="@+id/linearLayoutSaveBtn"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/editTextNumber"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/resultActivityDontKnowBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="don't know"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="@+id/firstBtn"
+            app:layout_constraintTop_toBottomOf="@+id/fifthBtn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutResultEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:ems="10"
-        android:inputType="number"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultTextView" />
+        android:layout_below="@+id/linearLayoutFifthBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/saveBtn"
-        android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/editTextNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:inputType="number"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutSaveBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/my_green"
-        android:text="SAVE"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        android:layout_below="@+id/linearLayoutResultEditText"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/resultActivityWhyAskBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/my_green"
+            android:text="SAVE"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutWhyAskBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="40dp"
-        android:width="150dp"
-        android:text="Why ask?"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityDontKnowBtn" />
+        android:layout_below="@+id/linearLayoutDontKnowBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/resultActivityGetHintBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/resultActivityWhyAskBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:width="150dp"
+            android:text="Why ask?"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutHintBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Get hint"
-        android:width="150dp"
-        app:layout_constraintStart_toStartOf="@+id/resultActivityWhyAskBtn"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskBtn" />
+        android:layout_below="@+id/linearLayoutWhyAskBtn"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/resultActivityAddCommentBtn"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/resultActivityGetHintBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:width="150dp"
+            android:text="Get hint"
+            app:layout_constraintStart_toStartOf="@+id/resultActivityWhyAskBtn"
+            app:layout_constraintTop_toBottomOf="@+id/resultActivityWhyAskBtn" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutComment"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Add comment"
-        android:width="150dp"
-        app:layout_constraintStart_toStartOf="@+id/resultActivityGetHintBtn"
-        app:layout_constraintTop_toBottomOf="@+id/resultActivityGetHintBtn" />
+        android:layout_below="@+id/linearLayoutHintBtn"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/resultActivityAddCommentEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/resultActivityAddCommentBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/resultActivityAddCommentBtn"
-        app:layout_constraintTop_toTopOf="@+id/resultActivityAddCommentBtn" />
+        <Button
+            android:id="@+id/resultActivityAddCommentBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:width="150dp"
+            android:text="Add comment" />
+
+        <EditText
+            android:id="@+id/resultActivityAddCommentEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="16dp"
+            android:inputType="textPersonName"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/resultActivityAddCommentBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resultActivityAddCommentBtn"
+            app:layout_constraintTop_toTopOf="@+id/resultActivityAddCommentBtn" />
+    </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

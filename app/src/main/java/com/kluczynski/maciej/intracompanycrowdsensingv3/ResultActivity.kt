@@ -1,15 +1,13 @@
 package com.kluczynski.maciej.intracompanycrowdsensingv3
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import com.kluczynski.maciej.intracompanycrowdsensingv3.data.ResultModel
@@ -50,6 +48,7 @@ class ResultActivity : AppCompatActivity() {
         val buttonOption3 = intent?.getStringExtra("buttonOption3")
         val buttonOption4 = intent?.getStringExtra("buttonOption4")
         val buttonOption5 = intent?.getStringExtra("buttonOption5")
+
         val timeDisplayQuestionOnScreen = currentDateProvider.getCurrentDate()
         displayQuestion(questionContent!!)
         activateWhyAskBtn(questionWhyAsk!!)
@@ -57,7 +56,7 @@ class ResultActivity : AppCompatActivity() {
         activateAddCommentBtn()
         val questionTimeString =
             DateManager().getSimpleDateFormat().parse(questionTime!!)!!.toString()
-        activteDontKnowBtn(
+        activateDontKnowBtn(
             sensingRequestAskTime = questionTimeString,
             questionContent = questionContent,
             timeDisplayQuestionOnScreen = timeDisplayQuestionOnScreen,
@@ -110,7 +109,6 @@ class ResultActivity : AppCompatActivity() {
                     buttonText = buttonOption5
                 )
             }
-
         } else if (questionType == "numerical") {
             createOpenQuestionScreen(
                 content = questionContent,
@@ -122,7 +120,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
-    private fun activteDontKnowBtn(
+    private fun activateDontKnowBtn(
         sensingRequestAskTime: String,
         questionContent: String,
         timeDisplayQuestionOnScreen: String,
@@ -130,7 +128,7 @@ class ResultActivity : AppCompatActivity() {
     ) {
         val dontKnowBtn = findViewById<Button>(R.id.resultActivityDontKnowBtn)
         dontKnowBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = questionContent,
                 result = "DONT KNOW",
                 sensingRequestAskTime = sensingRequestAskTime,
@@ -185,12 +183,12 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String
     ) {
         val editTextNumber = findViewById<EditText>(R.id.editTextNumber)
-        editTextNumber.visibility = View.VISIBLE
         val saveBtn = findViewById<Button>(R.id.saveBtn)
-        saveBtn.visibility = View.VISIBLE
+        showResultEditText()
+        showSaveBtn()
         deactivateCloseEndedButtons()
         saveBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = editTextNumber.text.toString(),
                 timeDisplayQuestionOnScreen = realAskTime,
@@ -202,23 +200,71 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun deactivateCloseEndedButtons(){
-        val firstBtn = findViewById<Button>(R.id.firstBtn)
-        firstBtn.visibility = View.INVISIBLE
-        val secondBtn = findViewById<Button>(R.id.secondBtn)
-        secondBtn.visibility = View.INVISIBLE
-        val thirdBtn = findViewById<Button>(R.id.thirdBtn)
-        thirdBtn.visibility = View.INVISIBLE
-        val forthBtn = findViewById<Button>(R.id.forthBtn)
-        forthBtn.visibility = View.INVISIBLE
-        val fifthBtn = findViewById<Button>(R.id.fifthBtn)
-        fifthBtn.visibility = View.INVISIBLE
+        hideFirstBtn()
+        hideSecondBtn()
+        hideThirdBtn()
+        hideForthBtn()
+        hideFifthBtn()
+    }
+
+    private fun hideFirstBtn(){
+        val firstBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutFirstBtn)
+        val params = firstBtnLinearLayout.layoutParams
+        params.height = 0
+    }
+
+    private fun hideSecondBtn(){
+        val secondBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutSecondBtn)
+        val params = secondBtnLinearLayout.layoutParams
+        params.height = 0
+    }
+
+    private fun hideThirdBtn(){
+        val thirdBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutThirdBtn)
+        val params = thirdBtnLinearLayout.layoutParams
+        params.height = 0
+    }
+
+    private fun hideForthBtn(){
+        val forthBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutForthBtn)
+        val params = forthBtnLinearLayout.layoutParams
+        params.height = 0
+    }
+
+    private fun hideFifthBtn(){
+        val fifthBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutFifthBtn)
+        val params = fifthBtnLinearLayout.layoutParams
+        params.height = 0
     }
 
     private fun createCloseEndedScreen() {
-        val saveBtn = findViewById<Button>(R.id.saveBtn)
-        saveBtn.visibility = View.INVISIBLE
-        val editTextField = findViewById<EditText>(R.id.editTextNumber)
-        editTextField.visibility = View.INVISIBLE
+        deactivateCloseEndedButtons()
+        hideSaveBtn()
+        hideResultEditText()
+    }
+
+    private fun hideResultEditText(){
+        val linearLayoutSaveBtn = findViewById<LinearLayout>(R.id.linearLayoutResultEditText)
+        val params = linearLayoutSaveBtn.layoutParams
+        params.height = 0
+    }
+
+    private fun showResultEditText(){
+        val linearLayoutSaveBtn = findViewById<LinearLayout>(R.id.linearLayoutResultEditText)
+        val params = linearLayoutSaveBtn.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+    }
+
+    private fun hideSaveBtn(){
+        val linearLayoutSaveBtn = findViewById<LinearLayout>(R.id.linearLayoutSaveBtn)
+        val params = linearLayoutSaveBtn.layoutParams
+        params.height = 0
+    }
+
+    private fun showSaveBtn(){
+        val linearLayoutSaveBtn = findViewById<LinearLayout>(R.id.linearLayoutSaveBtn)
+        val params = linearLayoutSaveBtn.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
     }
 
     private fun activateFirstBtn(
@@ -228,11 +274,14 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String,
         buttonText: String
     ) {
-        val firstBtn = findViewById<Button>(R.id.firstBtn)
-        firstBtn.visibility = View.VISIBLE
+        val firstBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutFirstBtn)
+        val params = firstBtnLinearLayout.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+
+        val firstBtn= findViewById<Button>(R.id.firstBtn)
         firstBtn.text = buttonText
         firstBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = firstBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
@@ -250,11 +299,14 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String,
         buttonText: String
     ) {
+        val secondBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutSecondBtn)
+        val params = secondBtnLinearLayout.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+
         val secondBtn = findViewById<Button>(R.id.secondBtn)
-        secondBtn.visibility = View.VISIBLE
         secondBtn.text = buttonText
         secondBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = secondBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
@@ -272,11 +324,14 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String,
         buttonText: String
     ) {
+        val thirdBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutThirdBtn)
+        val params = thirdBtnLinearLayout.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+
         val thirdBtn = findViewById<Button>(R.id.thirdBtn)
-        thirdBtn.visibility = View.VISIBLE
         thirdBtn.text = buttonText
         thirdBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = thirdBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
@@ -294,11 +349,14 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String,
         buttonText: String
     ) {
+        val forthBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutForthBtn)
+        val params = forthBtnLinearLayout.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+
         val forthBtn = findViewById<Button>(R.id.forthBtn)
-        forthBtn.visibility = View.VISIBLE
         forthBtn.text = buttonText
         forthBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = forthBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
@@ -316,11 +374,14 @@ class ResultActivity : AppCompatActivity() {
         sensingRequestId: String,
         buttonText: String
     ) {
+        val fifthBtnLinearLayout = findViewById<LinearLayout>(R.id.linearLayoutFifthBtn)
+        val params = fifthBtnLinearLayout.layoutParams
+        params.height = ActionBar.LayoutParams.WRAP_CONTENT
+
         val fifthBtn = findViewById<Button>(R.id.fifthBtn)
-        fifthBtn.visibility = View.VISIBLE
         fifthBtn.text = buttonText
         fifthBtn.setOnClickListener {
-            saveDataToTxtFile(
+            saveDataToTxtFileAndCloud(
                 content = content,
                 result = fifthBtn.text.toString(),
                 sensingRequestAskTime = sensingRequestTime,
@@ -331,7 +392,7 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveDataToTxtFile(
+    private fun saveDataToTxtFileAndCloud(
         content: String,
         result: String,
         sensingRequestAskTime: String,
