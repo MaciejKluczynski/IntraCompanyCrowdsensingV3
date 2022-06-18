@@ -17,6 +17,7 @@ import com.kluczynski.maciej.intracompanycrowdsensingv3.data.UserPreferencesMode
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.*
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.FileManager
 import com.kluczynski.maciej.intracompanycrowdsensingv3.domain.files.SharedPrefsProvider
+import java.lang.Exception
 import java.time.format.DateTimeFormatter
 
 
@@ -117,12 +118,12 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, requestCode)
     }
 
-    private fun showUserPrefsBtn(){
+    private fun showUserPrefsBtn() {
         val userPrefsBtn = findViewById<Button>(R.id.activity_main_load_user_preferences_btn)
         userPrefsBtn.visibility = View.VISIBLE
     }
 
-    private fun hideLoadSensingRequestsBtn(){
+    private fun hideLoadSensingRequestsBtn() {
         val userPrefsBtn = findViewById<Button>(R.id.activity_main_load_sensing_requests_btn)
         userPrefsBtn.visibility = View.INVISIBLE
     }
@@ -137,13 +138,18 @@ class MainActivity : AppCompatActivity() {
                 val uri: Uri = data.data!!
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    sensingRequests =
-                        SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
-                            fileContent
-                        )
-                    showUserPrefsBtn()
-                    hideLoadSensingRequestsBtn()
-                    activateLoadUserPreferencesBtn()
+                    try {
+                        sensingRequests =
+                            SensingRequestsDatabaseParser().parseTextToSensingRequestModelList(
+                                fileContent
+                            )
+                        showUserPrefsBtn()
+                        hideLoadSensingRequestsBtn()
+                        activateLoadUserPreferencesBtn()
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Wrong file format - please try again", Toast.LENGTH_LONG).show()
+                    }
+
                 } else {
                     Toast.makeText(this, "Sensing requests file is empty", Toast.LENGTH_LONG).show()
                     finishAndRemoveTask()
@@ -156,17 +162,22 @@ class MainActivity : AppCompatActivity() {
                 val uri: Uri = data.data!!
                 val fileContent = fileManager.readFileContent(uri)
                 if (fileContent != null) {
-                    userPreferences =
-                        UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
-                    val examinationPlan =
-                        SensingRequestsAllocationAlgorithm().allocateSensingRequests(
-                            userPreferences,
-                            sensingRequests
-                        )
-                    val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
-                    FileManager(this).createScheduleFile(examinationPlanString)
-                    ResultSaver(this).authenticateUserAndUploadSchedule()
-                    alertManager.scheduleAlerts(examinationPlan)
+                    try{
+                        userPreferences =
+                            UserPreferencesParser().parseTextToUserPreferencesModel(fileContent)
+                        val examinationPlan =
+                            SensingRequestsAllocationAlgorithm().allocateSensingRequests(
+                                userPreferences,
+                                sensingRequests
+                            )
+                        val examinationPlanString = convertExaminationToJsonObjects(examinationPlan)
+                        FileManager(this).createScheduleFile(examinationPlanString)
+                        ResultSaver(this).authenticateUserAndUploadSchedule()
+                        alertManager.scheduleAlerts(examinationPlan)
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Wrong file format - please try again", Toast.LENGTH_LONG).show()
+                    }
+
                 } else {
                     Toast.makeText(this, "User preferences file is empty", Toast.LENGTH_LONG).show()
                     finishAndRemoveTask()
