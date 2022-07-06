@@ -44,9 +44,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
             android:background="@color/my_green"
-            android:maxWidth="300dp"
             android:text="YES"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent" />
@@ -65,8 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@color/my_green"
-            android:maxWidth="300dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="NO"
             android:visibility="visible" />
     </LinearLayout>
@@ -84,8 +84,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@color/my_green"
-            android:maxWidth="300dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="Abcdef"
             android:visibility="visible"
             app:layout_constraintHorizontal_bias="0.0" />
@@ -104,9 +104,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@color/my_green"
-            android:maxWidth="300dp"
             android:text="Maybie"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:visibility="visible" />
     </LinearLayout>
 
@@ -124,7 +124,6 @@
             android:layout_marginTop="16dp"
             android:background="@color/my_green"
             android:layout_marginEnd="16dp"
-            android:maxWidth="300dp"
             android:layout_marginStart="16dp"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
@@ -149,6 +148,7 @@
             android:paddingEnd="8dp"
             android:text="don't know"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="40dp"
             app:layout_constraintStart_toStartOf="@+id/firstBtn"
             app:layout_constraintTop_toBottomOf="@+id/fifthBtn" />
     </LinearLayout>
@@ -252,7 +252,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_marginTop="16dp"
-            android:inputType="textPersonName"
+            android:inputType="textMultiLine"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/resultActivityAddCommentBtn"
             app:layout_constraintEnd_toEndOf="parent"
