@@ -26,7 +26,7 @@ class AlertManager(var context: Context, var dateManager: DateManager) {
         buttonOptions:List<String>?
     ) {
         val intent = Intent(context, ReminderBroadcast::class.java)
-        intent.putExtra("Question", "Have you got some time to answer a question")
+        intent.putExtra("Question", "If possible, please respond to a sensing request")
         intent.putExtra("Content", questionContent)
         intent.putExtra("Hint", hint)
         intent.putExtra("WhyAsk", whyAsk)

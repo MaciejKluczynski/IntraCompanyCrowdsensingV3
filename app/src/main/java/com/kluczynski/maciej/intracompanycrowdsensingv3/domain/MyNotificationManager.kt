@@ -172,7 +172,7 @@ class MyNotificationManager(val context: Context) {
             //create notification
             val builder = NotificationCompat.Builder(context, "ICC")
             builder.setSmallIcon(R.mipmap.ic_launcher)
-            builder.setContentTitle("Intra Company Crowdsensing Examination")
+            builder.setContentTitle("Hello! This is ICC")
             builder.setContentText(intent!!.getStringExtra("Question"))
             builder.priority = NotificationCompat.PRIORITY_MAX
             //dismiss on tap
