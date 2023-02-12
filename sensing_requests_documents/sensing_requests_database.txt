@@ -1,0 +1,82 @@
+[
+{
+	"sensing_request_id" : "0",
+	"priority" : "10",
+	"frequency" : "EVERY_DAY",
+	"desired_time_of_the_day" : "NOON",
+	"desired_day_of_the_week" : "THURSDAY",
+	"content" : "Have you seen any suspicious person without the badge today?",
+	"questionType" : "close_ended",
+	"why_ask" : "we have reported not authorized access to our office",
+	"hint" : "Please verify if you have seen any new pewson in the office without the white card on neck",
+	"buttonOptions" : ["YES","NO"]
+},
+{
+	"sensing_request_id" : "1",
+	"priority" : "7",
+	"frequency" : "ONCE_A_MONTH",
+	"desired_time_of_the_day" : "MORNING",
+	"desired_day_of_the_week" : "MONDAY",
+	"content" : "How is your mood today. Please type in the number from 0 to 10 meaning 0 - sad, 10 - happy",
+	"questionType" : "numerical",
+	"why_ask" : "we have to verify the emotional status of employees",
+	"hint" : "please verify your mood"
+},
+{
+	"sensing_request_id" : "2",
+	"priority" : "9",
+	"frequency" : "ONCE_A_WEEK",
+	"desired_time_of_the_day" : "EVENING",
+	"desired_day_of_the_week" : "FRIDAY",
+	"content" : "Have you seen any dangerous tools left on the floor today?",
+	"questionType" : "close_ended",
+	"why_ask" : "We need to verify workplace health and safety rules",
+	"hint" : "Please go to the workshop and verify if the dangerous tools like blades, saws or hammers are left on the floor",
+	"buttonOptions" : ["YES","NO"]
+},
+{
+	"sensing_request_id" : "3",
+	"priority" : "8",
+	"frequency" : "ONCE_A_WEEK",
+	"desired_time_of_the_day" : "MORNING",
+	"desired_day_of_the_week" : "WEDNESDAY",
+	"content" : "How many tasks do you have to complete today?",
+	"questionType" : "numerical",
+	"why_ask" : "We have to make sure that our employees are not overloaded",
+	"hint" : "Please check how many tasks do you have on yourself"
+},
+{
+	"sensing_request_id" : "4",
+	"priority" : "2",
+	"frequency" : "ONCE_A_MONTH",
+	"desired_time_of_the_day" : "MORNING",
+	"desired_day_of_the_week" : "WEDNESDAY",
+	"content" : "Is your printer working?",
+	"questionType" : "close_ended",
+	"why_ask" : "why not?",
+	"hint" : "this is hint",
+	"buttonOptions" : ["YES","NO"]
+},
+{
+	"sensing_request_id" : "5",
+	"priority" : "4",
+	"frequency" : "ONCE_A_WEEK",
+	"desired_time_of_the_day" : "EVENING",
+	"desired_day_of_the_week" : "FRIDAY",
+	"content" : "How long was the last meeting you participated in?",
+	"questionType" : "numerical",
+	"why_ask" : "we have to make sure meetings are not too long and don't affect daily responsibilities",
+	"hint" : "You can check call length in the Microsoft teams application"
+},
+{
+	"sensing_request_id" : "6",
+	"priority" : "5",
+	"frequency" : "ONCE_A_WEEK",
+	"desired_time_of_the_day" : "MORNING",
+	"desired_day_of_the_week" : "THURSDAY",
+	"content" : "Approximately how much time in minutes did you spend handling e-mail yesterday?",
+	"questionType" : "numerical",
+	"why_ask" : "we need to know if users are not overloaded by emails",
+	"hint" : "please verify how much time you spent yesterday on handling emails"
+}
+]

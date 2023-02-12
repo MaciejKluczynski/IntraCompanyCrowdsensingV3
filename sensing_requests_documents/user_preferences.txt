@@ -1,0 +1,8 @@
+{
+	"ids" : ["0","1","2","3","5"],
+	"preferred_times" : ["MORNING","AFTERNOON","EVENING"],
+	"preferred_days" : ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"],
+	"max_number_per_day" : "2",
+	"start_date" : "15-02-2023",
+	"end_date" : "22-08-2023"
+}
